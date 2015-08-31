@@ -12,9 +12,14 @@ def request(IP, port, message):
     s.connect((IP, port))
     s.send(messageLength(message))
     s.send(message)
+    respLen = int(s.recv(MESSAGE_LENGTH_DIGITS))
+    resp = s.recv(respLen)
+    s.close()
+    return resp
 
 if __name__ == '__main__':
     IP = '127.0.0.1'
     port = 2020
     message = "Hello$world"
-    request(IP, port, message)
+    response = request(IP, port, message)
+    print response

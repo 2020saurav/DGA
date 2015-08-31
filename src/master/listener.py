@@ -8,13 +8,14 @@ import thread
 sys.path.append('../../config')
 
 from networkParams import *
+import responder
 
 def handler(sc, address):
     messageLength = int(sc.recv(MESSAGE_LENGTH_DIGITS))
     message = sc.recv(messageLength)
     words = message.split(MESSAGE_DELIMITER)
     print words
-    sc.send(MESSAGE_RECEIPT_SUCCESS)
+    responder.send(sc, MESSAGE_RECEIPT_SUCCESS)
     sc.close()
 
 if __name__ == '__main__':
