@@ -5,7 +5,7 @@ sys.path.append('../config')
 from networkParams import *
 
 def messageLength(message):
-    return str('%04d'%len(message))
+    return str(('%0'+str(MESSAGE_LENGTH_DIGITS)+'d')%len(message))
 
 def request(IP, port, message):
     s = socket.socket()
