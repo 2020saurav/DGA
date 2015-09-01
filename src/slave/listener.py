@@ -1,5 +1,5 @@
 '''
-Network call handler of master server
+Network call handler of slave server
 '''
 
 from socket import *
@@ -22,6 +22,7 @@ def handler(sc, address):
 if __name__ == '__main__':
     s = socket(AF_INET, SOCK_STREAM)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    #TODO diff port for slave
     s.bind((HOST_IP, HOST_PORT))
     s.listen(MAX_BACKLOG_CONN)
     while True:
