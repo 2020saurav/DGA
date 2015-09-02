@@ -1,8 +1,6 @@
 import sys
 sys.path.append('../src/util')
-# TODO import successfully
 from primes import nextPrime,isPrime
-# TODO cannot import BloomFilter class
 from bloom import BloomFilter
 
 def testNextPrime():
