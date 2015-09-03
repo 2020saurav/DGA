@@ -1,9 +1,15 @@
 Distributed/Parallel Graph Algortihms
 ===================================================================
-
-### Generating all connected subgraphs of a given graph
+## Generating all connected subgraphs of a given graph
 ___________________________________________________________
-*	We will progress in stages. At the end of ith stage we will have all the connected subgraphs which have less than equal to i edges. We will have a distributed global queue which will have all the newly generated subgraphs in the current stage. Each thread/server will pick a one of these subgraph at a time as a job and will process it.
-Base case will be each edge as a connected subgraph.
-*	When a server picks a graph from the queue it processes it as a job and generates all possible connected subgraphs (of actual graph), which can be constructed by adding exactly one edge to the graph. Then that server tries to put the newly generated graphs to the global queue. Before pushing the graph to the global queue the the graph is hashed and its presence is checked against a global bloom filter. If the newly generated graph was already present it is discarded else it is added to the the global queue.
-*	Load balancing is very easy, every server is itself responsible for keeping itself busy. After finishing a job(expanding a given connected subgraph by adding exactly one edge) the server will pull one new subgraph from the global queue and process it.
+### Algorithm
+* Initailly each edge represents a connected subgraph of the given graph.
+* The algorithm progresses in stages. In the ith stage, generate all the subgraphs of the given graph that have exactly i edges.
+* In ith stage pick all subgraphs generated in (i-1)th stage, and extend the graphs by exactly one edge. In this way you will obtain all the subgraphs with exactly i edges from subgraphs of (i-1) edges((i-1)th stage).
+* Keep only distinct subgraphs in each step using bloomfilter (which maybe cleared after each step to improve accuracy).
+______________________________________________________________________
+### Architecture
+* We implement this algorithm in a distributed environment using a master-slave architecture.
+* Master is just for initialization and bookeeping. Slaves do all the processing.
+* Suppose, we map(hash) each subgraph to a value(128 bit number). We use a distributed bloom filter on these values to maintain only distinct subgraphs. Initally, we shard the range of hash values. Each slave will maintain a bloom filter for a particular range of hash values. And each slave knows which bloom filter it must contact to check a hash value of a subgraph. This way no slave gets loaded and checking uniqueness is properly distributed.
+* Each slave also has a task queue which actually consists of subgraphs. A slave will pick a task from any of the task queue(maybe randomly) and process it. After processing it will produce many subgraphs(i.e. tasks for the next stage) which would further be distributed (again maybe randomly) among all the task queues. 
