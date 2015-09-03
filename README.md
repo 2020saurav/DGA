@@ -1,13 +1,13 @@
 Distributed/Parallel Graph Algortihms
 ===================================================================
-## Generating all connected subgraphs of a given graph
+# Generating all connected subgraphs of a given graph
 ___________________________________________________________
-### Algorithm
+## Algorithm
 * Initailly each edge represents a connected subgraph of the given graph.
 * The algorithm progresses in stages. In the ith stage, generate all the subgraphs of the given graph that have exactly i edges.
 * In ith stage pick all subgraphs generated in (i-1)th stage, and extend the graphs by exactly one edge. In this way you will obtain all the subgraphs with exactly i edges from subgraphs of (i-1) edges((i-1)th stage).
 * Keep only distinct subgraphs in each step using bloomfilter (which maybe cleared after each step to improve accuracy).
-### Architecture
+## Architecture
 ____________________________________________________________
 * We implement this algorithm in a distributed environment using a master-slave architecture.
 * Master is just for initialization and bookeeping. Slaves do all the processing.
