@@ -17,9 +17,20 @@ def request(IP, port, message):
     s.close()
     return resp
 
+def testMasterMainGOT(IP, port):
+    message = 'GOT'
+    response = request(IP, port, message)
+    assert response == 'WINTER IS COMING'
+    print 'GOT Test Passed'
+
+def testHelloWorld(IP, port):
+    message = "Hello$world"
+    response = request(IP, port, message)
+    assert response == 'SUCCESS'
+    print 'Hello World Test Passed'
+
 if __name__ == '__main__':
     IP = '127.0.0.1'
     port = 2020
-    message = "Hello$world"
-    response = request(IP, port, message)
-    print response
+    testHelloWorld(IP, port)
+    testMasterMainGOT(IP, port)

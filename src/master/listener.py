@@ -10,13 +10,21 @@ sys.path.append('../util')
 
 from networkParams import *
 import network
+import main
+
+Master = main.Main()
 
 def handler(sc, address):
     messageLength = int(sc.recv(MESSAGE_LENGTH_DIGITS))
     message = sc.recv(messageLength)
     words = message.split(MESSAGE_DELIMITER)
-    print words
-    network.send(sc, MESSAGE_RECEIPT_SUCCESS)
+
+    if words[0] == 'GOT':
+        response = Master.gotTest()
+        network.send(sc, response)
+    else:
+        network.send(sc, MESSAGE_RECEIPT_SUCCESS)
+
     sc.close()
 
 if __name__ == '__main__':
