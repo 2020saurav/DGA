@@ -37,7 +37,6 @@ def listToNetString(serverList):
     netString = netString[:-1]
     return netString
 
-
 def netStringToServerList(netString):
     serverList = netString.split(MESSAGE_DELIMITER_BANG)
     return map(netStringToServer, serverList)
