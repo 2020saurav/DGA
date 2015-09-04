@@ -1,8 +1,10 @@
 import socket
 import sys
 sys.path.append('../config')
+sys.path.append('../src/util')
 
 from networkParams import *
+import server
 
 def messageLength(message):
     return str(('%0'+str(MESSAGE_LENGTH_DIGITS)+'d')%len(message))
@@ -17,11 +19,13 @@ def request(IP, port, message):
     s.close()
     return resp
 
-def testMasterMainGOT(IP, port):
-    message = 'GOT'
+def testMasterServerList(IP, port):
+    message = 'GETSERVERINFO'
     response = request(IP, port, message)
-    assert response == 'WINTER IS COMING'
-    print 'GOT Test Passed'
+    servers = server.netStringToServerList(response)
+    assert len(servers) == 4
+    assert servers[0].role == "master"
+    print "Master Server List Test Passed"
 
 def testHelloWorld(IP, port):
     message = "Hello$world"
@@ -33,4 +37,4 @@ if __name__ == '__main__':
     IP = '127.0.0.1'
     port = 2020
     testHelloWorld(IP, port)
-    testMasterMainGOT(IP, port)
+    testMasterServerList(IP, port)
