@@ -30,11 +30,18 @@ def testMasterServerList(IP, port):
 def testHelloWorld(IP, port):
     message = "Hello$world"
     response = request(IP, port, message)
-    assert response == 'SUCCESS'
+    assert response == 'UNRECOGNIZED'
     print 'Hello World Test Passed'
+
+def testMasterSlaveServer(IP, port):
+    message = "TESTMASTERSLAVESERVER"
+    response = request(IP, port, message)
+    # assert
+    print 'Master Slave Server List tested'
 
 if __name__ == '__main__':
     IP = '127.0.0.1'
     port = 2020
     testHelloWorld(IP, port)
     testMasterServerList(IP, port)
+    testMasterSlaveServer(IP, port)

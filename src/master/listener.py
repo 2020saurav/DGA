@@ -22,8 +22,11 @@ def handler(sc, address):
     if words[0] == 'GETSERVERINFO':
         response = Master.getServerListNetString()
         network.send(sc, response)
-    else:
+    elif words[0] == 'TESTMASTERSLAVESERVER':
+        Master.sendServerListToSlaves()
         network.send(sc, MESSAGE_RECEIPT_SUCCESS)
+    else:
+        network.send(sc, MESSAGE_UNRECOGNIZED)
 
     sc.close()
 

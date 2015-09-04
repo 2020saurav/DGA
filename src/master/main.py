@@ -19,3 +19,9 @@ class Main:
 
     def getServerListNetString(self):
         return server.listToNetString(servers)
+
+    def sendServerListToSlaves(self):
+        slaves = filter(lambda s: s.role=="slave" and s.alive, servers)
+        message = self.getServerListNetString()
+        for slave in slaves:
+            network.sendToIP(slave.IP, slave.port, message)

@@ -7,7 +7,7 @@ from networkParams import *
 def messageLength(message):
     return str(('%0'+str(MESSAGE_LENGTH_DIGITS)+'d')%len(message))
 
-def send(IP, port, message):
+def sendToIP(IP, port, message):
     s = socket.socket()
     s.connect((IP, port))
     s.send(messageLength(message))
