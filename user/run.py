@@ -13,6 +13,7 @@ from servers import servers
 import socket
 import network
 import server
+import networkParams
 def readInput():
     '''First line contains two arguments
     n = number of vertices
@@ -36,6 +37,6 @@ def findMasterIpPort():
 if __name__ == '__main__':
     graph = readInput()
     MasterIP , MasterPort = findMasterIpPort()
-    network.sendToIP(MasterIP,MasterPort,"INPUT"+graph)
+    network.sendToIP(MasterIP,MasterPort,"INPUT"+MESSAGE_DELIMITER+graph)
     # TODO Wait for computation to end
     # merge all output file if required

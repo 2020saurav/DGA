@@ -18,5 +18,8 @@
 
 
 #### Messaging Protocols
+
 - GETSERVERINFO : Request for list of servers from master
 - SERVERINFO : Response with list of servers
+- INPUT : Send input to master
+ 
