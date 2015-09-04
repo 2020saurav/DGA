@@ -19,8 +19,8 @@ def handler(sc, address):
     message = sc.recv(messageLength)
     words = message.split(MESSAGE_DELIMITER)
 
-    if words[0] == 'GOT':
-        response = Master.gotTest()
+    if words[0] == 'GETSERVERINFO':
+        response = Master.getServerListNetString()
         network.send(sc, response)
     else:
         network.send(sc, MESSAGE_RECEIPT_SUCCESS)

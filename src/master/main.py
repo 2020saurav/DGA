@@ -1,3 +1,11 @@
+import sys
+sys.path.append('../../config')
+sys.path.append('../util')
+
+from servers import servers
+import network
+import server
+
 class Main:
     ''' This Main class of Master server is intended for following tasks:
     - Functions for acting on messages received by the listener
@@ -9,5 +17,5 @@ class Main:
     def __init__(self):
         pass
 
-    def gotTest(self):
-        return "WINTER IS COMING"
+    def getServerListNetString(self):
+        return server.listToNetString(servers)

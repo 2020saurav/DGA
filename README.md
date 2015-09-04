@@ -1,4 +1,4 @@
-# Distributed/Parallel Graph Algortihms
+# Distributed/Parallel Graph Algorithms
 
 ### Generating all connected subgraphs of a given graph
 
