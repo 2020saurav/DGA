@@ -22,6 +22,8 @@ class Graph:
         for edge in edges:
             self.adjMat[edge[0]][edge[1]] = 1
             self.adjMat[edge[1]][edge[0]] = 1
+            self.adjList[edge[0]].append(edge[1])
+            self.adjList[edge[1]].append(edge[0])
         self.edges = []
         # All the edges will be numbered in this way.
         for i in range(0,n):
