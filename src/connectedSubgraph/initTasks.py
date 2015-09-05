@@ -15,7 +15,13 @@ def genInitalTasks(graph, p, m):
     for edge in graph.edges:
         taskVertices = [0]*graph.n
         taskVertices[edge[0]] = taskVertices[edge[1]] = 1
-        taskEdges = [edgeNumber]
+        taskEdges = []
+        for outgoingEdge in graph.edgeList[edge[0]]:
+            if outgoingEdge != edgeNumber :
+                taskEdges.append(outgoingEdge)
+        for outgoingEdge in graph.edgeList[edge[1]]:
+            if outgoingEdge != edgeNumber :
+                taskEdges.append(outgoingEdge)
         edgeNumber += 1
         taskBloomHash = (2**edgeNumber)%p
         taskServerHash = (2**edgeNumber)%m
