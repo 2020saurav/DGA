@@ -19,24 +19,24 @@ def readInput():
     n = number of vertices
     m = number of edges in the graph
     next m line conatins (a,b) reresenting an edge.'''
-    n , m  = map(int,raw_input().split(" "))
+    n, m  = map(int, raw_input().split(" "))
     edges = []
-    for i in range(0,m):
-        a , b = map(int,raw_input().split(" "))
-        edges.append((a,b))
+    for i in range(0, m):
+        a, b = map(int, raw_input().split(" "))
+        edges.append((a, b))
     return n, m, edges
 
 def findMasterIpPort():
     for s in servers :
         if s.role == 'master':
-            return s.IP , s.port
+            return s.IP, s.port
     #master not found
     assert False
 
 if __name__ == '__main__':
     n, m, edges = readInput()
-    graph = Graph(n,m,edges).toString()
-    MasterIP , MasterPort = findMasterIpPort()
-    network.sendToIP(MasterIP,MasterPort,"INPUT"+MESSAGE_DELIMITER+graph)
+    graph = Graph(n, m, edges)
+    MasterIP, MasterPort = findMasterIpPort()
+    network.sendToIP(MasterIP, MasterPort, "INPUT" + MESSAGE_DELIMITER + graph.toString())
     # TODO Wait for computation to end
     # merge all output file if required

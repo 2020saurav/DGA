@@ -22,4 +22,6 @@
 - GETSERVERINFO : Request for list of servers from master
 - SERVERINFO : Response with list of servers
 - INPUT : Send input to master
+- PUSHTASK : Request to save the task in task queue
+- POPPEDTASK : Response task after popping from task queue
  
