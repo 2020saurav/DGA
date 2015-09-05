@@ -1,5 +1,5 @@
 import sys
-import thread
+import copy
 sys.path.append('../../config')
 sys.path.append('../graph')
 sys.path.append('../util')
@@ -31,8 +31,8 @@ class ExtendSubgraph:
             for j in range(0, numTasks):
                 if i != j:
                     newEdges.append(task.edges[j])
-            newBloomHash = (task.bloomHash + self.twoPowModP[tasks.edges[i]])%self.p
-            newServerHash = (task.serverHash + self.twoPowModM[tasks.edges[i]])%self.m
+            newBloomHash = (task.bloomHash + self.twoPowModP[task.edges[i]])%self.p
+            newServerHash = (task.serverHash + self.twoPowModM[task.edges[i]])%self.m
             a , b = self.graph.edges[task.edges[i]]
             if task.vertices[a] == 0:
                 for outGoingEdge in self.graph.edgeList[a]:
@@ -51,3 +51,4 @@ def preComputeTwoPow(p,maxEdges):
     twoPowModP = [1]
     for i in range(1,maxEdges):
         twoPowModP.append((twoPowModP[i-1]*2)%p)
+    return twoPowModP

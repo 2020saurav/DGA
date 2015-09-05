@@ -30,11 +30,10 @@ def testPushPoppedTaskConversion():
     t = task.toTaskFromNetString(netString)
     t1 = task.toTaskFromPoppedTaskString(t.getPoppedTaskString())    
     assert t1.toNetString() == netString
-    
     t2 = task.toTaskFromPushTaskString(t1.getPushTaskString())    
     assert t2.toNetString() == netString
-
     print "Push Popped Task Conversion Passed"
+
 if __name__ == '__main__':
     testNetStringConversion()
     testObjectConversion()
