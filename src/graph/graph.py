@@ -14,11 +14,13 @@ class Graph:
         self.n = n
         self.m = m
         self.adjMat = []
+        self.edgeList = []
         for i in range(0, n):
             self.adjMat.append([0]*n)
         self.adjList = []
         for i in range(0, n):
             self.adjList.append([])
+            self.edgeList.append([])
         for edge in edges:
             self.adjMat[edge[0]][edge[1]] = 1
             self.adjMat[edge[1]][edge[0]] = 1
@@ -26,10 +28,15 @@ class Graph:
             self.adjList[edge[1]].append(edge[0])
         self.edges = []
         # All the edges will be numbered in this way.
+        edgeNum = 0
         for i in range(0,n):
             for j in range(i+1, n):
                 if self.adjMat[i][j] == 1 :
+                    self.edgeList[i].append(edgeNum)
+                    self.edgeList[j].append(edgeNum)
                     self.edges.append((i,j))
+                    edgeNum += 1
+
 
     def toString(self):
         graph = str(self.n) + MESSAGE_DELIMITER
