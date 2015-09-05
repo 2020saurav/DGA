@@ -26,7 +26,6 @@
 - PONG : Reply of PING, if server is alive
 - PARTIALRESULT : Response from slaves with their results
 - JOBCOMPLETE : Notification from slave to master
-
  
 - SERVERINFO : Response with list of servers
 - GRAPH : Graph from master to slaves
