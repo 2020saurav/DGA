@@ -13,7 +13,7 @@ from servers import servers
 import socket
 import network
 import server
-import networkParams
+from networkParams import MESSAGE_DELIMITER
 def readInput():
     '''First line contains two arguments
     n = number of vertices
@@ -24,8 +24,7 @@ def readInput():
     for i in range(0,m):
         a , b = map(int,raw_input().split(" "))
         edges.append((a,b))
-    graph = Graph(n,m,edges).toString()
-    return graph
+    return n, m, edges
 
 def findMasterIpPort():
     for s in servers :
@@ -35,7 +34,8 @@ def findMasterIpPort():
     assert False
 
 if __name__ == '__main__':
-    graph = readInput()
+    n, m, edges = readInput()
+    graph = Graph(n,m,edges).toString()
     MasterIP , MasterPort = findMasterIpPort()
     network.sendToIP(MasterIP,MasterPort,"INPUT"+MESSAGE_DELIMITER+graph)
     # TODO Wait for computation to end
