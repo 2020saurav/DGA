@@ -3,6 +3,9 @@ sys.path.append('../../config')
 
 from networkParams import *
 
+MESSAGE_HEAD_PUSH = "PUSHTASK" + MESSAGE_DELIMITER
+MESSAGE_HEAD_POPPED = "POPPEDTASK" + MESSAGE_DELIMITER
+
 class Task:
     ''' Task contains necessary information to process the subgraph.
     Since we intend to proceed by growing edges, we need to keep the list edges we can grow in the 
@@ -12,26 +15,48 @@ class Task:
     vertices : list of vertex which are already in the subgraph
     edges : serial number of edges which can be grown in the next step
     bloomHash : ###
-    slaveHash : ###
+    serverHash : ###
     '''
-    def __init__(self, vertices, edges, bloomHash, slaveHash): 
+    def __init__(self, vertices, edges, bloomHash, serverHash): 
         self.vertices = vertices
         self.edges = edges
         self.bloomHash = bloomHash
-        self.slaveHash = slaveHash
+        self.serverHash = serverHash
 
     ''' Convert the object to a string to transfer over the network
     '''
     def toNetString(self):
         netString = ''
-        # Pattern: <Num of total vertices> Delim <Zero One string of vertices present> Delim
-        # <Num of edges> Delim <e1> Delim ... Delim <en> Delim <bloomHash> Delim <slaveHash>
+        edgeCount = len(self.edges)
+        verticesString = "".join(map(str, self.vertices))
+        edgesString = MESSAGE_DELIMITER.join(map(str, self.edges))
+        netString += (verticesString + MESSAGE_DELIMITER)
+        netString += (str(edgeCount) + MESSAGE_DELIMITER)
+        netString += (edgesString + MESSAGE_DELIMITER)
+        netString += (str(self.bloomHash) + MESSAGE_DELIMITER)
+        netString += (str(self.serverHash))
         return netString
 
+    def getPoppedTaskString(self):
+        return MESSAGE_HEAD_POPPED + self.toNetString()
+
+    def getPushTaskString(self):
+        return MESSAGE_HEAD_PUSH + self.toNetString()
 
 ''' Convert a netString to a Task object.
 (not in Task Class)
 '''
-def toTaskObject(netString):
-    pass
+def toTaskFromNetString(netString):
+    array = netString.split(MESSAGE_DELIMITER)
+    vertices = map(lambda c: int(c), array[0])
+    edgeCount = int(array[1])
+    edges = map(lambda i: int(i), array[2:-2])
+    bloomHash = array[-2]
+    serverHash = array[-1]
+    return Task(vertices, edges, bloomHash, serverHash)
 
+def toTaskFromPoppedTaskString(netString):
+    return toTaskFromNetString(netString[len(MESSAGE_HEAD_POPPED):])
+
+def toTaskFromPushTaskString(netString):
+    return toTaskFromNetString(netString[len(MESSAGE_HEAD_PUSH):])
