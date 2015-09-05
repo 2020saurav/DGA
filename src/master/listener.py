@@ -22,10 +22,26 @@ def handler(sc, address):
     if words[0] == 'GETSERVERINFO':
         response = Master.getServerListNetString()
         network.send(sc, response)
-    elif words[0] == 'TESTMASTERSLAVESERVER':
-        Master.sendServerListToSlaves()
+    elif words[0] == 'INPUT':
+        Master.processInput(words)
+        network.send(sc, MESSAGE_RECEIPT_SUCCESS)
+    elif words[0] == 'HEARTBEAT':
+        Master.recordHeartBeat(words)
+        network.send(sc, MESSAGE_RECEIPT_SUCCESS)
+    elif words[0] == 'PING':
+        Master.recordPing(words)
+        network.send(sc, 'PONG')
+    elif words[0] == 'PONG':
+        Master.recordPong(words)
+        network.send(sc, MESSAGE_RECEIPT_SUCCESS)
+    elif words[0] == 'PARTIALRESULT':
+        Master.processPartialResult(words)
+        network.send(sc, MESSAGE_RECEIPT_SUCCESS)
+    elif words[0] == 'JOBCOMPLETE':
+        Master.recordJobCompleteNotification(words)
         network.send(sc, MESSAGE_RECEIPT_SUCCESS)
     else:
+        Master.unrecognizedMessage(words)
         network.send(sc, MESSAGE_UNRECOGNIZED)
 
     sc.close()

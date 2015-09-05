@@ -20,8 +20,20 @@
 #### Messaging Protocols
 
 - GETSERVERINFO : Request for list of servers from master
-- SERVERINFO : Response with list of servers
 - INPUT : Send input to master
+- HEARTBEAT : Pulse from slaves to master
+- PING : Ping from a server to another
+- PONG : Reply of PING, if server is alive
+- PARTIALRESULT : Response from slaves with their results
+- JOBCOMPLETE : Notification from slave to master
+
+ 
+- SERVERINFO : Response with list of servers
+- GRAPH : Graph from master to slaves
 - PUSHTASK : Request to save the task in task queue
 - POPPEDTASK : Response task after popping from task queue
- 
+- STARTPROCESSING : Notification from master to begin processing
+- REQUESTTASK : Request a new task from another slave
+- SENDPARTIALRESULT : Request to send partial result
+- HASHCHECK : Request to check if the hash exists
+- HASHRESPONSE : Response of HASHCHECK
