@@ -23,20 +23,20 @@ def handler(sc, address):
         response = Master.getServerListNetString()
         network.send(sc, response)
     elif words[0] == 'INPUT':
-        Master.processInput(words)
+        Master.processInput(message)
     elif words[0] == 'HEARTBEAT':
-        Master.recordHeartBeat(words)
+        Master.recordHeartBeat(message)
     elif words[0] == 'PING':
-        Master.recordPing(words)
+        Master.recordPing(message)
         network.send(sc, 'PONG')
     elif words[0] == 'PONG':
-        Master.recordPong(words)
+        Master.recordPong(message)
     elif words[0] == 'PARTIALRESULT':
-        Master.processPartialResult(words)
+        Master.processPartialResult(message)
     elif words[0] == 'JOBCOMPLETE':
-        Master.recordJobCompleteNotification(words)
+        Master.recordJobCompleteNotification(message)
     else:
-        Master.unrecognizedMessage(words)
+        Master.unrecognizedMessage(message)
 
     sc.close()
 
