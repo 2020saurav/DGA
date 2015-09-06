@@ -21,8 +21,32 @@ def handler(sc, address):
 
     if words[0] == 'SERVERINFO':
         Slave.saveServerInfo(message)
+    elif words[0] == 'GRAPH':
+        Slave.saveGraph(message)
+    elif words[0] == 'PUSHTASK':
+        Slave.pushTaskToQueue(message)
+    elif words[0] == 'POPPEDTASK':
+        Slave.receivePoppedTask(message)
+    elif words[0] == 'STARTPROCESSING':
+        Slave.startProcessing(message)
+    elif words[0] == 'REQUESTTASK':
+        response = Slave.grantTask(message)
+        network.send(sc, response)
+    elif words[0] == 'SENDPARTIALRESULT':
+        response = Slave.getPartialResult(message)
+        network.send(sc, response)
+    elif words[0] == 'HASHCHECK':
+        response = Slave.checkHash(message)
+        network.send(sc, response)
+    elif words[0] == 'HASHRESPONSE':
+        Slave.processHashResponse(message)
+    elif words[0] == 'PING':
+        Slave.recordPing(message)
+        network.send(sc, 'PONG')
+    elif words[0] == 'PONG':
+        Slave.recordPong(message)
     else:
-        network.send(sc, MESSAGE_UNRECOGNIZED)
+        Slave.unrecognizedMessage(message)
 
     sc.close()
 

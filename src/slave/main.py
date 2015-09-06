@@ -19,4 +19,42 @@ class Main:
     
     def saveServerInfo(self, netString):
         self.servers = server.netStringToServerList(netString) 
-        print self.servers
+
+    def saveGraph(self, netString):
+        pass
+
+    def pushTaskToQueue(self, netString):
+        pass
+
+    def receivePoppedTask(self, netString):
+        pass
+
+    def startProcessing(self, netString):
+        pass
+
+    def grantTask(self, netString):
+        # return netString of task
+        pass
+
+    def getPartialResult(self, netString):
+        # return netString of result
+        pass
+
+    def checkHash(self, netString):
+        # return netString of boolean response
+        pass
+
+    def processHashResponse(self, netString):
+        pass
+
+    def recordPing(self, netString):
+        pass
+
+    def recordPong(self, netString):
+        pass
+
+    def unrecognizedMessage(self, netString):
+        pass
+
+    def sendHeartBeatToMaster(self):
+        pass
