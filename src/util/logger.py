@@ -1,15 +1,14 @@
 import logging
 import os
-logDirectory = '../logs/'
-def getLogger(name="None", logFile='dga.log'):
-    logPath = logDirectory + logFile
-    if not os.path.exists(os.path.dirname(logPath)):
-        os.makedirs(os.path.dirname(logPath))
-    formatter = logging.Formatter(
-        '%(levelname)s: %(asctime)s %(funcName)s(%(lineno)d) -- %(message)s',
-         datefmt='%Y-%m-%d %H:%M:%S')
+from config.logConfig import *
+
+def getLogger(name="None", logFileName='dga.log'):
+    logFilePath = os.path.join(LOG_DIRECTORY, logFileName)
+    if not os.path.exists(os.path.dirname(logFilePath)):
+        os.makedirs(os.path.dirname(logFilePath))
+    formatter = logging.Formatter('[%(asctime)s] %(name)s [%(pathname)s:%(lineno)d] %(levelname)s - %(message)s')
     logger = logging.getLogger(name)
-    fh = logging.FileHandler(logPath)
+    fh = logging.FileHandler(logFilePath)
     fh.setFormatter(formatter)
     logger.addHandler(fh)
     logger.setLevel(logging.DEBUG)
