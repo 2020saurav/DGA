@@ -1,8 +1,8 @@
 '''Module to handle all i/o's for master.'''
 import sys
-sys.path.append('../graph')
-sys.path.append('../../config')
-from graph import Graph
+sys.path.append('../../')
+
+from src.graph.graph import Graph
 def readInput():
     '''First line contains two arguments
     n = number of vertices

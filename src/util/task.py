@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../../config')
+sys.path.append('../../')
 
-from networkParams import *
+from config.networkParams import *
 
 MESSAGE_HEAD_PUSH = "PUSHTASK" + MESSAGE_DELIMITER
 MESSAGE_HEAD_POPPED = "POPPEDTASK" + MESSAGE_DELIMITER

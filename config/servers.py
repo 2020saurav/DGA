@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../src/util')
+sys.path.append('../')
 
-from server import Server
+from src.util.server import Server
 
 servers = [
     Server('01', '127.0.0.1', 2020, "master", True),

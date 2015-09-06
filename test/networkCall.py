@@ -1,10 +1,9 @@
 import socket
 import sys
-sys.path.append('../config')
-sys.path.append('../src/util')
+sys.path.append('../')
 
-from networkParams import *
-import server
+from config.networkParams import *
+import src.util.server
 
 def messageLength(message):
     return str(('%0'+str(MESSAGE_LENGTH_DIGITS)+'d')%len(message))

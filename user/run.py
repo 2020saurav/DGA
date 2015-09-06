@@ -5,15 +5,15 @@ The input is passed to master which then handles
 everything aterwards.'''
 
 import sys
-sys.path.append('../src/graph')
-sys.path.append('../src/util')
-sys.path.append('../config')
-from graph import Graph
-from servers import servers
 import socket
-import network
-import server
-from networkParams import MESSAGE_DELIMITER
+sys.path.append('../')
+
+from src.graph.graph import Graph
+from config.servers import servers
+from config.networkParams import MESSAGE_DELIMITER
+import src.util.server
+import src.util.network
+
 def readInput():
     '''First line contains two arguments
     n = number of vertices

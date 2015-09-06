@@ -1,9 +1,8 @@
 import sys
-sys.path.append('../src/util')
-sys.path.append('../config')
+sys.path.append('../')
 
-from task import Task
-import task
+from src.util.task import Task
+import src.util.task as task
 
 def testNetStringConversion():    
     vertices = [1, 0, 1 , 1] # which vertices are present in subgraph

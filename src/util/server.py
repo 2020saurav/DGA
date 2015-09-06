@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../../config')
+sys.path.append('../../')
 
-from networkParams import *
+from config.networkParams import *
 
 class Server:
     def __init__(self, ID, IP, port, role, alive):

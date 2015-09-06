@@ -1,14 +1,11 @@
 import sys
-sys.path.append('../config')
-sys.path.append('../src/graph')
-sys.path.append('../src/util')
-sys.path.append('../src/connectedSubgraph')
+sys.path.append('../')
 
-from networkParams import MESSAGE_DELIMITER
-from graph import Graph
-from task import Task
-from extendSubgraph import ExtendSubgraph
-from initTasks import genInitalTasks
+from config.networkParams import MESSAGE_DELIMITER
+from src.graph.graph import Graph
+from src.util.task import Task
+from src.connectedSubgraph.extendSubgraph import ExtendSubgraph
+from src.connectedSubgraph.initTasks import genInitalTasks
 
 def testExtendSubgraph1():
     graph = Graph(5,5,[(0,1),(1,2),(2,3),(3,4),(4,0)])

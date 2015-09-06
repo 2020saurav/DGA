@@ -1,11 +1,10 @@
 import sys
 import copy
-sys.path.append('../../config')
-sys.path.append('../graph')
-sys.path.append('../util')
-from networkParams import MESSAGE_DELIMITER
-from graph import Graph
-from task import Task
+sys.path.append('../../')
+
+from config.networkParams import MESSAGE_DELIMITER
+from src.graph.graph import Graph
+from src.util.task import Task
 
 '''Function to create inital tasks given graph as input'''
 

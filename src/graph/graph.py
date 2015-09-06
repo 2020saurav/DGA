@@ -1,7 +1,6 @@
 import sys
-import thread
-sys.path.append('../../config')
-from networkParams import MESSAGE_DELIMITER
+sys.path.append('../../')
+from config.networkParams import MESSAGE_DELIMITER
 
 class Graph:
     """ A class to store graph information for small graphs.

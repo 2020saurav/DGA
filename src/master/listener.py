@@ -5,11 +5,10 @@ Network call handler of master server
 from socket import *
 import sys
 import thread
-sys.path.append('../../config')
-sys.path.append('../util')
+sys.path.append('../../')
 
-from networkParams import *
-import network
+from config.networkParams import *
+import src.util.network
 import main
 
 Master = main.Main()

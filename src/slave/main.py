@@ -1,9 +1,8 @@
 import sys
-sys.path.append('../../config')
-sys.path.append('../util')
+sys.path.append('../../')
 
-import network
-import server
+import src.util.network
+import src.util.server
 
 class Main:
     ''' This Main class of Slave server is intended for following tasks:

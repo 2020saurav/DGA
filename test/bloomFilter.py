@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../src/util')
-from primes import nextPrime,isPrime
-from bloom import BloomFilter
+sys.path.append('../')
+from src.util.primes import nextPrime,isPrime
+from src.util.bloom import BloomFilter
 
 def testNextPrime():
     n = nextPrime(1)

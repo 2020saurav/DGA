@@ -1,10 +1,9 @@
 import sys
-sys.path.append('../../config')
-sys.path.append('../util')
+sys.path.append('../../')
 
-from servers import servers
-import network
-import server
+from config.servers import servers
+import src.util.network
+import src.util.server
 
 class Main:
     ''' This Main class of Master server is intended for following tasks:
