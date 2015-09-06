@@ -36,3 +36,5 @@
 - SENDPARTIALRESULT : Request to send partial result
 - HASHCHECK : Request to check if the hash exists
 - HASHRESPONSE : Response of HASHCHECK
+
+Instant responses to be returned in cases of GETSERVERINFO, PING, HASHCHECK, REQUESTTASK, SENDPARTIALRESULT
