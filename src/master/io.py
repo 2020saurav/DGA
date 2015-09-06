@@ -1,7 +1,4 @@
 '''Module to handle all i/o's for master.'''
-import sys
-sys.path.append('../../')
-
 from src.graph.graph import Graph
 def readInput():
     '''First line contains two arguments

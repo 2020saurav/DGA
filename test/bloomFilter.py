@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../')
 from src.util.primes import nextPrime,isPrime
 from src.util.bloom import BloomFilter
 

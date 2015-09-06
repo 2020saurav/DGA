@@ -1,7 +1,4 @@
-import sys
 import copy
-sys.path.append('../../')
-
 from config.networkParams import MESSAGE_DELIMITER
 from src.graph.graph import Graph
 from src.util.task import Task

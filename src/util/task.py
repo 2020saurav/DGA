@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../../')
-
 from config.networkParams import *
 
 MESSAGE_HEAD_PUSH = "PUSHTASK" + MESSAGE_DELIMITER

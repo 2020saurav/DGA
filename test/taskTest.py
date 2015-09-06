@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../')
-
 from src.util.task import Task
 import src.util.task as task
 

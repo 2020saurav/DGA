@@ -4,10 +4,7 @@ User runs this program to compute the result.
 The input is passed to master which then handles 
 everything aterwards.'''
 
-import sys
 import socket
-sys.path.append('../')
-
 from src.graph.graph import Graph
 from config.servers import servers
 from config.networkParams import MESSAGE_DELIMITER

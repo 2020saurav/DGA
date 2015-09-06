@@ -2,14 +2,11 @@
 Network call handler of master server
 '''
 
-from socket import *
-import sys
-import thread
-sys.path.append('../../')
-
-from config.networkParams import *
-import src.util.network
 import main
+import thread
+import src.util.network
+from socket import *
+from config.networkParams import *
 
 Master = main.Main()
 

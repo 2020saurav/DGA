@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../../')
 from config.networkParams import MESSAGE_DELIMITER
 
 class Graph:

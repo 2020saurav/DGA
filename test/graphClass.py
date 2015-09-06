@@ -1,5 +1,3 @@
-import sys
-sys.path.append('../')
 from src.graph.graph import Graph
 from src.graph.graph import stringToGraph
 

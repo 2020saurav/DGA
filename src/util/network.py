@@ -1,7 +1,4 @@
 import socket
-import sys
-sys.path.append('../../')
-
 from config.networkParams import *
 
 def messageLength(message):

@@ -1,7 +1,5 @@
-import sys
-sys.path.append('../../')
-
 from config.servers import servers
+from config.networkParams import *
 import src.util.network
 import src.util.server
 

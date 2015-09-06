@@ -3,11 +3,7 @@ Network call handler of slave server
 '''
 
 from socket import *
-import sys
 import thread
-sys.path.append('../../')
-
-
 from config.networkParams import *
 import src.util.network
 import main

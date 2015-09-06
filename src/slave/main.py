@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../../')
-
 import src.util.network
 import src.util.server
 
