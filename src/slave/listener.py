@@ -9,10 +9,8 @@ from config.host import *
 from config.messageHeads import *
 import src.util.network as network
 import main
-import Queue
 
 Slave = main.Main()
-TaskQueue = Queue.Queue()
 
 def handler(sc, address):
     messageLength = int(sc.recv(MESSAGE_LENGTH_DIGITS))
@@ -26,9 +24,7 @@ def handler(sc, address):
     elif messageHead == GRAPH:
         Slave.saveGraph(message)
     elif messageHead == PUSHTASK:
-        Slave.pushTaskToQueue(message)
-    elif messageHead == POPPEDTASK:
-        Slave.receivePoppedTask(message)
+        main.pushTaskToQueue(message)
     elif messageHead == STARTPROCESSING:
         Slave.startProcessing(message)
     elif messageHead == REQUESTTASK:
@@ -38,10 +34,10 @@ def handler(sc, address):
         response = Slave.getPartialResult(message)
         network.send(sc, response)
     elif messageHead == HASHCHECK:
-        response = Slave.checkHash(message)
+        response = main.checkHash(message)
         network.send(sc, response)
-    elif messageHead == HASHRESPONSE:
-        Slave.processHashResponse(message)
+    elif messageHead == PUTHASH:
+        main.putHash(message)
     elif messageHead == PING:
         Slave.recordPing(message)
         network.send(sc, PONG)
