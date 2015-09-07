@@ -6,6 +6,7 @@ from socket import *
 import thread
 from config.networkParams import *
 from config.host import *
+from config.messageHeads import *
 import src.util.network as network
 import main
 import Queue
@@ -18,31 +19,32 @@ def handler(sc, address):
     networkMessage = sc.recv(messageLength)
     words = networkMessage.split(MESSAGE_DELIMITER)
     message = MESSAGE_DELIMITER.join(words[1:])
+    messageHead = words[0]
 
-    if words[0] == 'SERVERINFO':
+    if messageHead == SERVERINFO:
         Slave.saveServerInfo(message)
-    elif words[0] == 'GRAPH':
+    elif messageHead == GRAPH:
         Slave.saveGraph(message)
-    elif words[0] == 'PUSHTASK':
+    elif messageHead == PUSHTASK:
         Slave.pushTaskToQueue(message)
-    elif words[0] == 'POPPEDTASK':
+    elif messageHead == POPPEDTASK:
         Slave.receivePoppedTask(message)
-    elif words[0] == 'STARTPROCESSING':
+    elif messageHead == STARTPROCESSING:
         Slave.startProcessing(message)
-    elif words[0] == 'REQUESTTASK':
+    elif messageHead == REQUESTTASK:
         response = Slave.grantTask(message)
         network.send(sc, response)
-    elif words[0] == 'SENDPARTIALRESULT':
+    elif messageHead == SENDPARTIALRESULT:
         response = Slave.getPartialResult(message)
         network.send(sc, response)
-    elif words[0] == 'HASHCHECK':
+    elif messageHead == HASHCHECK:
         response = Slave.checkHash(message)
         network.send(sc, response)
-    elif words[0] == 'HASHRESPONSE':
+    elif messageHead == HASHRESPONSE:
         Slave.processHashResponse(message)
-    elif words[0] == 'PING':
+    elif messageHead == PING:
         Slave.recordPing(message)
-        network.send(sc, 'PONG')
+        network.send(sc, PONG)
     else:
         Slave.unrecognizedMessage(message)
 

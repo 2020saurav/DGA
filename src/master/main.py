@@ -1,6 +1,7 @@
 from config.servers import servers
 from config.networkParams import *
 from config.host import *
+from config.messageHeads import *
 import src.util.network as network
 import src.util.server as server
 import src.util.logger as logger
@@ -47,7 +48,7 @@ class Main:
 
     def sendPingForAliveTest(self, server):
         log.info('Sending ping to server ' + server.ID)
-        netString = 'PING' + MESSAGE_DELIMITER + HOST_ID
+        netString = PING + MESSAGE_DELIMITER + HOST_ID
         try:
             response = network.sendAndGetResponseFromIP(server.IP, server.port)
             log.info('PING response received from server ' + server.ID + ': '+ response)
@@ -80,6 +81,6 @@ class Main:
 
     def sendProcessStartNotification(self):
         aliveSlaves = filter(lambda s: s.role=="slave" and s.alive, servers)
-        message = 'STARTPROCESSING'
+        message = STARTPROCESSING
         for slave in aliveSlaves:
             network.sendToIP(slave.IP, slave.port, message)       

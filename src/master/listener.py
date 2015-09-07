@@ -8,6 +8,7 @@ import src.util.network as network
 from socket import *
 from config.networkParams import *
 from config.host import *
+from config.messageHeads import *
 
 Master = main.Main()
 
@@ -16,20 +17,21 @@ def handler(sc, address):
     networkMessage = sc.recv(messageLength)
     words = networkMessage.split(MESSAGE_DELIMITER)
     message = MESSAGE_DELIMITER.join(words[1:])
+    messageHead = words[0]
 
-    if words[0] == 'GETSERVERINFO':
+    if messageHead == GETSERVERINFO:
         response = Master.getServerListNetString()
         network.send(sc, response)
-    elif words[0] == 'INPUT':
+    elif messageHead == INPUT:
         Master.processInput(message)
-    elif words[0] == 'HEARTBEAT':
+    elif messageHead == HEARTBEAT:
         Master.recordHeartBeat(message)
-    elif words[0] == 'PING':
+    elif messageHead == PING:
         Master.recordPing(message)
-        network.send(sc, 'PONG')
-    elif words[0] == 'PARTIALRESULT':
+        network.send(sc, PONG)
+    elif messageHead == PARTIALRESULT:
         Master.processPartialResult(message)
-    elif words[0] == 'JOBCOMPLETE':
+    elif messageHead == JOBCOMPLETE:
         Master.recordJobCompleteNotification(message)
     else:
         Master.unrecognizedMessage(message)

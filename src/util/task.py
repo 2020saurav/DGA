@@ -1,8 +1,5 @@
 from config.networkParams import *
 
-MESSAGE_HEAD_PUSH = "PUSHTASK" + MESSAGE_DELIMITER
-MESSAGE_HEAD_POPPED = "POPPEDTASK" + MESSAGE_DELIMITER
-
 class Task:
     ''' Task contains necessary information to process the subgraph.
     Since we intend to proceed by growing edges, we need to keep the list edges we can grow in the 
