@@ -28,7 +28,7 @@ def handler(sc, address):
     elif messageHead == STARTPROCESSING:
         Slave.startProcessing(message)
     elif messageHead == REQUESTTASK:
-        response = Slave.grantTask(message)
+        response = main.grantTask()
         network.send(sc, response)
     elif messageHead == SENDPARTIALRESULT:
         response = Slave.getPartialResult(message)
@@ -36,8 +36,6 @@ def handler(sc, address):
     elif messageHead == HASHCHECK:
         response = main.checkHash(message)
         network.send(sc, response)
-    elif messageHead == PUTHASH:
-        main.putHash(message)
     elif messageHead == PING:
         Slave.recordPing(message)
         network.send(sc, PONG)

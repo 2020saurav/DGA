@@ -36,3 +36,14 @@ class BloomFilter:
             if self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m] == False:
                 return False
         return True
+
+    '''Returns Ture if given value has been already inserted False otherwise
+    Also stores the hash in bloom filter on the fly'''
+    def checkAndInsert(self,num):
+        wasPresent = True
+        for i in range(0,self.k):
+            idx = (self.hashes[i][0]*num + self.hashes[i][1])%self.m
+            if self.filter[idx] == False:
+                wasPresent = False
+                self.filter[idx] = True
+        return wasPresent

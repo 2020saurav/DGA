@@ -3,8 +3,10 @@ import src.util.server as server
 import src.graph.graph as graph
 import src.util.task as task
 from src.util.bloom import BloomFilter
-from src.connectedSubgraph import ExtendSubgraph
+from src.connectedSubgraph.extendSubgraph import ExtendSubgraph
 from config.networkParams import *
+from random import randint
+import time
 
 TaskQueue = None
 BloomHashFilter = None
@@ -43,22 +45,16 @@ class Main:
         taskRetries = 0
         self.graphProcessor = ExtendSubgraph(self.graph, self.p, self.m)
         while taskRetries < MAX_RETRIES :
-            # TODO getNewTask return a task else none
-            task = getNewTask(TaskQueue)
+            task = getNewTask(self)
             if task == None :
                 taskRetries += 1
                 continue
             else :
                 taskRetries = 0
                 newTasks = self.graphProcessor.generateNewTasks(task)
-                for tasks in newTasks :
-                    # TODO checkUniquenessOfTask
-                    if checkUniquenessOfTask(tasks) :
-                       TaskQueue.put(tasks)
-
-    def grantTask(self, netString):
-        # return netString of task
-        pass
+                for newTask in newTasks :
+                    if checkUniquenessOfTask(newTask.bloomHash, self.aliveSlaves[serverHash]) :
+                       TaskQueue.put(newTask)
 
     def getPartialResult(self, netString):
         # return netString of result
@@ -73,29 +69,63 @@ class Main:
     def sendHeartBeatToMaster(self):
         pass
 
-'''Insert a new task in the task queue'''
+def grantTask():
+    # return netString of task
+    # return 'EMPTYTASK' if task queue is empty currently
+    # else return a task prepended with 'POPPEDTASK'
+    if TaskQueue.empty() :
+        return EMPTYTASK
+    else :
+        poppedTask = TaskQueue.get()
+        message = POPPEDTASK + MESSAGE_DELIMITER + poppedTask.toNetString()
+        return message
+
+'''Insert a given task in the task queue'''
 def pushTaskToQueue(netString):
     TaskQueue.put(task.toTaskFromNetString(netString))
 
 ''' Put a given hash into bloom filter '''
 def putHash(message):
+    # @Depricated
     pass
 
-'''Check a given hash and return the response'''
+'''Check a given hash, insert the hash if it was not present already
+    and return the response'''
 def checkHash(message):
-    pass
-
-'''Return the task represented by given string.'''
-def receivePoppedTask(self, netString):
-    return task.toTaskFromNetString(netString)
+    hashToCheck = int(message)
+    return HASHRESPONSE + MESSAGE_DELIMITER +\
+            BloomHashFilter.checkAndInsert(hashToCheck)
 
 '''Given a task return true if it has not been seen yet'''
-def checkUniquenessOfTask():
-    pass
+def checkUniquenessOfTask(bloomHash, slaveToContact):
+    # TODO optimize to aviod network call if server is local
+    message = HASHCHECK + MESSAGE_DELIMITER + str(bloomHash)
+    hashCheckResponse = network.sendAndGetResponseFromIP(
+            slaveToContact.IP,
+            slaveToContact.port,
+            message)
+    # Note : this call will simultaneously put the hash
+    # into the bloom filter if it was not present already
+    words = hashCheckResponse.split(MESSAGE_DELIMITER)
+    return not bool(words[1])
 
 '''Get a new task,
 first check the local task queue for a task
 if no task is found then try to get task from a random slave
 if that also fails then wait and return None'''
-def getNewTask():
-    pass
+def getNewTask(main):
+    if not TaskQueue.empty() :
+        return TaskQueue.get()
+    else :
+        randomSlave = main.aliveSlaves[randint(0,main.m)]
+        newTaskString = network.sendAndGetResponseFromIP(
+            randomSlave.IP,
+            randomSlave.port,
+            REQUESTTASK)
+        words = newTaskString.split(MESSAGE_DELIMITER)
+        messageHead = words[0]
+        if messageHead == EMPTYTASK :
+            time.sleep(UNSUCCESSFUL_GET_TASK_WAIT_TIME)
+            return None
+        else :
+            return task.toTaskFromNetString(MESSAGE_DELIMITER.join(words[1:]))
