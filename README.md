@@ -37,3 +37,11 @@
 - HASHRESPONSE : Response of HASHCHECK
 
 Instant responses to be returned in cases of GETSERVERINFO, PING, HASHCHECK, REQUESTTASK, SENDPARTIALRESULT
+
+#### Instructions to set up:
+- Add environment variable PYTHONPATH.
+  ```
+  export PYTHONPATH="$PYTHONPATH:/path/to/DGA"
+  ```
+- Run `python setup.py`
+- ..

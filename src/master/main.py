@@ -1,7 +1,11 @@
 from config.servers import servers
 from config.networkParams import *
+from config.host import *
 import src.util.network as network
 import src.util.server as server
+import src.util.logger as logger
+
+log = logger.getLogger("Master-Main")
 
 class Main:
     ''' This Main class of Master server is intended for following tasks:
@@ -12,8 +16,7 @@ class Main:
     - Allocating initial tasks to slaves
     '''
     def __init__(self):
-        # TODO
-        pass
+        self.servers = servers
 
     def getServerListNetString(self):
         return server.listToNetString(servers)
@@ -54,3 +57,20 @@ class Main:
     def unrecognizedMessage(self, netString):
         # Log this
         pass
+
+    def sendPingForAliveTest(self, server):
+        log.info('Sending ping to server ' + server.ID)
+        netString = 'PING' + MESSAGE_DELIMITER + HOST_ID
+        try:
+            response = network.sendAndGetResponseFromIP(server.IP, server.port)
+            log.info('PING response received from server ' + server.ID + ': '+ response)
+            setServerAliveStatus(server.ID, True)
+        except:
+            response = None
+            log.error('No PING response from server ' + server.ID + '. Marking it dead.')
+            setServerAliveStatus(server.ID, False)
+
+    def setServerAliveStatus(self, serverId, isAlive):
+        for s in self.servers:
+            if s.ID == serverId:
+                s.alive = isAlive
