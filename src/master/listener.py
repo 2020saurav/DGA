@@ -4,9 +4,10 @@ Network call handler of master server
 
 import main
 import thread
-import src.util.network
+import src.util.network as network
 from socket import *
 from config.networkParams import *
+from config.host import *
 
 Master = main.Main()
 

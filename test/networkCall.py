@@ -1,23 +1,15 @@
 import socket
 from config.networkParams import *
-import src.util.server
+import src.util.server as server
+import src.util.network as network
+from config.host import *
 
 def messageLength(message):
     return str(('%0'+str(MESSAGE_LENGTH_DIGITS)+'d')%len(message))
 
-def request(IP, port, message):
-    s = socket.socket()
-    s.connect((IP, port))
-    s.send(messageLength(message))
-    s.send(message)
-    respLen = int(s.recv(MESSAGE_LENGTH_DIGITS))
-    resp = s.recv(respLen)
-    s.close()
-    return resp
-
 def testMasterServerList(IP, port):
     message = 'GETSERVERINFO'
-    response = request(IP, port, message)
+    response = network.sendAndGetResponseFromIP(IP, port, message)
     servers = server.netStringToServerList(response)
     assert len(servers) == 4
     assert servers[0].role == "master"
@@ -25,19 +17,18 @@ def testMasterServerList(IP, port):
 
 def testHelloWorld(IP, port):
     message = "Hello$world"
-    response = request(IP, port, message)
-    assert response == 'UNRECOGNIZED'
+    response = network.sendToIP(IP, port, message)
     print 'Hello World Test Passed'
 
-def testMasterSlaveServer(IP, port):
-    message = "TESTMASTERSLAVESERVER"
-    response = request(IP, port, message)
-    # assert
-    print 'Master Slave Server List tested'
+def testPingPong(IP, port):
+    message = "PING"
+    response = network.sendAndGetResponseFromIP(IP, port, message)
+    assert response == 'PONG'
+    print "Ping Test Passed"
 
 if __name__ == '__main__':
-    IP = '127.0.0.1'
-    port = 2020
+    IP = HOST_IP
+    port = HOST_PORT
     testHelloWorld(IP, port)
     testMasterServerList(IP, port)
-    testMasterSlaveServer(IP, port)
+    testPingPong(IP, port)

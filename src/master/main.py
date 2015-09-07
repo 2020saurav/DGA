@@ -1,7 +1,7 @@
 from config.servers import servers
 from config.networkParams import *
-import src.util.network
-import src.util.server
+import src.util.network as network
+import src.util.server as server
 
 class Main:
     ''' This Main class of Master server is intended for following tasks:

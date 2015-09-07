@@ -5,7 +5,8 @@ Network call handler of slave server
 from socket import *
 import thread
 from config.networkParams import *
-import src.util.network
+from config.host import *
+import src.util.network as network
 import main
 
 Slave = main.Main()
@@ -49,7 +50,7 @@ def handler(sc, address):
 if __name__ == '__main__':
     s = socket(AF_INET, SOCK_STREAM)
     s.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    s.bind((HOST_IP, 2021)) # TODO change to HOST_PORT
+    s.bind((HOST_IP, HOST_PORT))
     s.listen(MAX_BACKLOG_CONN)
     while True:
         sc, address = s.accept()

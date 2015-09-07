@@ -1,6 +1,3 @@
-HOST_ID = '01' # Unique server ID
-HOST_IP = '' # IP address of the server
-HOST_PORT = 2020 # Port open for the server
 MESSAGE_LENGTH_DIGITS = 4
 MESSAGE_DELIMITER = '$'
 MESSAGE_DELIMITER_BANG = '#'

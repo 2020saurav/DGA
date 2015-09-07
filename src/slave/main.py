@@ -1,5 +1,5 @@
-import src.util.network
-import src.util.server
+import src.util.network as network
+import src.util.server as server
 
 class Main:
     ''' This Main class of Slave server is intended for following tasks:
