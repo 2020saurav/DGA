@@ -1,3 +1,4 @@
 *.pyc
 logs/
 config/logConfig.py
+config/host.py

@@ -8,13 +8,16 @@ from config.networkParams import *
 from config.host import *
 import src.util.network as network
 import main
+import Queue
 
 Slave = main.Main()
+TaskQueue = Queue.Queue()
 
 def handler(sc, address):
     messageLength = int(sc.recv(MESSAGE_LENGTH_DIGITS))
-    message = sc.recv(messageLength)
-    words = message.split(MESSAGE_DELIMITER)
+    networkMessage = sc.recv(messageLength)
+    words = networkMessage.split(MESSAGE_DELIMITER)
+    message = MESSAGE_DELIMITER.join(words[1:])
 
     if words[0] == 'SERVERINFO':
         Slave.saveServerInfo(message)

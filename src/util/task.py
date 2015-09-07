@@ -34,12 +34,6 @@ class Task:
         netString += (str(self.serverHash))
         return netString
 
-    def getPoppedTaskString(self):
-        return MESSAGE_HEAD_POPPED + self.toNetString()
-
-    def getPushTaskString(self):
-        return MESSAGE_HEAD_PUSH + self.toNetString()
-
 ''' Convert a netString to a Task object.
 (not in Task Class)
 '''
@@ -51,9 +45,3 @@ def toTaskFromNetString(netString):
     bloomHash = array[-2]
     serverHash = array[-1]
     return Task(vertices, edges, bloomHash, serverHash)
-
-def toTaskFromPoppedTaskString(netString):
-    return toTaskFromNetString(netString[len(MESSAGE_HEAD_POPPED):])
-
-def toTaskFromPushTaskString(netString):
-    return toTaskFromNetString(netString[len(MESSAGE_HEAD_PUSH):])

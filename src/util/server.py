@@ -17,8 +17,6 @@ class Server:
         netString += (str(self.alive))
         return netString
 
-MESSAGE_HEAD = 'SERVERINFO' + MESSAGE_DELIMITER
-
 def netStringToServer(netString):
     array = netString.split(MESSAGE_DELIMITER)
     ID = array[0]
@@ -29,13 +27,12 @@ def netStringToServer(netString):
     return Server(ID, IP, port, role, alive)
 
 def listToNetString(serverList):
-    netString = MESSAGE_HEAD
+    netString = ''
     for s in serverList:
         netString += (s.toNetString() + MESSAGE_DELIMITER_BANG)
     netString = netString[:-1]
     return netString
 
 def netStringToServerList(netString):
-    netString = netString[len(MESSAGE_HEAD):]
     serverList = netString.split(MESSAGE_DELIMITER_BANG)
     return map(netStringToServer, serverList)

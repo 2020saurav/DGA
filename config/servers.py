@@ -1,6 +1,3 @@
-import sys
-sys.path.append('../')
-
 from src.util.server import Server
 
 servers = [
