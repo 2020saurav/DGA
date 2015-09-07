@@ -7,6 +7,7 @@ import src.util.server as server
 import src.util.logger as logger
 import src.connectedSubgraph.initTasks as initTasks
 import src.util.primes as primes
+import src.graph.graph as graph
 from random import randint
 
 log = logger.getLogger("Master-Main")
@@ -30,9 +31,7 @@ class Main:
         return server.listToNetString(servers)
 
     def processInput(self, netString):
-        # Receive input from client. Parse it and form appropriate data structures
-        # set self.graph to this graph object
-        pass
+        self.graph = graph.stringToGraph(netString)
 
     def recordHeartBeat(self, netString):
         # Store heart beat information. Server ID will be present in message
@@ -54,15 +53,17 @@ class Main:
         log.debug("Unrecognized Message: " + netString)
 
     def sendGraphToSlaves(self):
+        message = GRAPH + MESSAGE_DELIMITER + self.graph.toString()
         for slave in self.aliveSlaves:
-            # form netString of Graph and do network.send
-            pass
+            network.sendToIP(slave.IP, slave.port, message)
+            log.info("Graph sent to server " + slave.ID)
 
     def sendServerListToSlaves(self):
         message = SERVERINFO + MESSAGE_DELIMITER
         message += server.listToNetString(self.servers)
         for slave in self.aliveSlaves:
             network.sendToIP(slave.IP, slave.port, message)
+            log.info("Server list sent to server " + slave.ID)
 
     def sendInitialTaskToSlaves(self):
         tasks = initTasks.genInitalTasks(self.graph, self.p, self.m)
@@ -72,13 +73,16 @@ class Main:
             message = PUSHTASK + MESSAGE_DELIMITER
             message += t.toNetString()
             network.sendToIP(slaveServer.IP, slaveServer.port, message)
+            log.info("Initial task sent to server " + slaveServer.ID)
 
     def sendProcessStartNotification(self):
         message = STARTPROCESSING
         for slave in self.aliveSlaves:
-            network.sendToIP(slave.IP, slave.port, message)       
+            network.sendToIP(slave.IP, slave.port, message)
+            log.info("Start Processing message sent to server " + slave.ID)      
 
 def getServersAfterPingTests(servers):
     for s in servers:
-        s.alive = network.sendPingForAliveTest(s):
+        s.alive = network.sendPingForAliveTest(s)
+        log.info("Server " + s.ID + " alive: " + str(s.alive))
     return servers
