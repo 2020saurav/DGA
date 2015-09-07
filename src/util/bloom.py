@@ -1,6 +1,6 @@
 from math import log
 from primes import nextPrime
-from random import randint,seed
+from random import randint, seed
 
 class BloomFilter:
     """docstring for BloomFilter

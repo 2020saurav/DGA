@@ -1,9 +1,13 @@
 from config.servers import servers
 from config.networkParams import *
 from config.host import *
+from config.messageHeads import *
 import src.util.network as network
 import src.util.server as server
 import src.util.logger as logger
+import src.connectedSubgraph.initTasks as initTasks
+import src.util.primes as primes
+from random import randint
 
 log = logger.getLogger("Master-Main")
 
@@ -16,13 +20,18 @@ class Main:
     - Allocating initial tasks to slaves
     '''
     def __init__(self):
-        self.servers = servers
+        self.servers = getServersAfterPingTests(servers)
+        self.graph = None
+        self.aliveSlaves = filter(lambda s: s.role=='slave' and s.alive, self.servers)
+        self.m = len(self.aliveSlaves)
+        self.p = primes.getLargeRandomPrime()
 
     def getServerListNetString(self):
         return server.listToNetString(servers)
 
     def processInput(self, netString):
         # Receive input from client. Parse it and form appropriate data structures
+        # set self.graph to this graph object
         pass
 
     def recordHeartBeat(self, netString):
@@ -30,8 +39,7 @@ class Main:
         pass
 
     def recordPing(self, netString):
-        # Log this
-        pass
+        log.info('PING received from server ID ' + netString)
 
     def processPartialResult(self, netString):
         # parse result from a slave and store it to finally merge all results
@@ -45,41 +53,32 @@ class Main:
     def unrecognizedMessage(self, netString):
         log.debug("Unrecognized Message: " + netString)
 
-    def sendPingForAliveTest(self, server):
-        log.info('Sending ping to server ' + server.ID)
-        netString = 'PING' + MESSAGE_DELIMITER + HOST_ID
-        try:
-            response = network.sendAndGetResponseFromIP(server.IP, server.port)
-            log.info('PING response received from server ' + server.ID + ': '+ response)
-            setServerAliveStatus(server.ID, True)
-        except:
-            response = None
-            log.error('No PING response from server ' + server.ID + '. Marking it dead.')
-            setServerAliveStatus(server.ID, False)
-
-    def setServerAliveStatus(self, serverId, isAlive):
-        for s in self.servers:
-            if s.ID == serverId:
-                s.alive = isAlive
-                break
-
     def sendGraphToSlaves(self):
-        aliveSlaves = filter(lambda s: s.role=='slave' and s.alive, self.servers)
-        for slave in aliveSlaves:
+        for slave in self.aliveSlaves:
             # form netString of Graph and do network.send
             pass
 
     def sendServerListToSlaves(self):
-        aliveSlaves = filter(lambda s: s.role=="slave" and s.alive, servers)
-        message = server.listToNetString(servers)
-        for slave in aliveSlaves:
+        message = SERVERINFO + MESSAGE_DELIMITER
+        message += server.listToNetString(self.servers)
+        for slave in self.aliveSlaves:
             network.sendToIP(slave.IP, slave.port, message)
 
     def sendInitialTaskToSlaves(self):
-        pass
+        tasks = initTasks.genInitalTasks(self.graph, self.p, self.m)
+        for t in tasks:
+            slaveIndex = randint(0, len(aliveSlaves))
+            slaveServer = aliveSlaves[slaveIndex]
+            message = PUSHTASK + MESSAGE_DELIMITER
+            message += t.toNetString()
+            network.sendToIP(slaveServer.IP, slaveServer.port, message)
 
     def sendProcessStartNotification(self):
-        aliveSlaves = filter(lambda s: s.role=="slave" and s.alive, servers)
-        message = 'STARTPROCESSING'
-        for slave in aliveSlaves:
+        message = STARTPROCESSING
+        for slave in self.aliveSlaves:
             network.sendToIP(slave.IP, slave.port, message)       
+
+def getServersAfterPingTests(servers):
+    for s in servers:
+        s.alive = network.sendPingForAliveTest(s):
+    return servers

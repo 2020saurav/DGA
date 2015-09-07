@@ -21,16 +21,6 @@ def testObjectConversion():
     assert t.toNetString() == netString
     print "To Object Conversion Passed"
 
-def testPushPoppedTaskConversion():
-    netString = "1011$3$1$3$4$hash1$hash2"
-    t = task.toTaskFromNetString(netString)
-    t1 = task.toTaskFromPoppedTaskString(t.getPoppedTaskString())    
-    assert t1.toNetString() == netString
-    t2 = task.toTaskFromPushTaskString(t1.getPushTaskString())    
-    assert t2.toNetString() == netString
-    print "Push Popped Task Conversion Passed"
-
 if __name__ == '__main__':
     testNetStringConversion()
     testObjectConversion()
-    testPushPoppedTaskConversion()
