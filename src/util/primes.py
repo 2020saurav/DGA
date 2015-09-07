@@ -1,3 +1,5 @@
+from random import randint
+
 ''' Returns a prime greater than n '''
 def nextPrime(n):
     assert n > 0
@@ -6,7 +8,7 @@ def nextPrime(n):
         n += 1
     return n
 
-''' Returns true if n is prime flase otherwise'''
+''' Returns True if n is prime False otherwise'''
 def isPrime(n):
     if n == 2 :
         return True
@@ -18,3 +20,8 @@ def isPrime(n):
             return False
         i += 2
     return True
+
+''' Get large random prime '''
+def getLargeRandomPrime():
+    largeNumber = randint(10**9, 10**10)
+    return nextPrime(largeNumber)
