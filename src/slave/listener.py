@@ -25,8 +25,6 @@ def handler(sc, address):
         Slave.saveGraph(message)
     elif words[0] == 'PUSHTASK':
         Slave.pushTaskToQueue(message)
-    elif words[0] == 'POPPEDTASK':
-        Slave.receivePoppedTask(message)
     elif words[0] == 'STARTPROCESSING':
         Slave.startProcessing(message)
     elif words[0] == 'REQUESTTASK':
@@ -38,8 +36,6 @@ def handler(sc, address):
     elif words[0] == 'HASHCHECK':
         response = Slave.checkHash(message)
         network.send(sc, response)
-    elif words[0] == 'HASHRESPONSE':
-        Slave.processHashResponse(message)
     elif words[0] == 'PING':
         Slave.recordPing(message)
         network.send(sc, 'PONG')
