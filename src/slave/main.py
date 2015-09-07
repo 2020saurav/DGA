@@ -2,7 +2,8 @@ import src.util.network as network
 import src.util.server as server
 import src.graph.graph as graph
 import src.util.task as task
-from src.util.bloom import BloomFilter 
+from src.util.bloom import BloomFilter
+from src.connectedSubgraph import ExtendSubgraph
 from config.networkParams import *
 
 TaskQueue = None
@@ -18,12 +19,15 @@ class Main:
     - ###
     '''
     def __init__(self):
-        # TODO set these value
-        # p
-        # initialize bloom hash
+        self.p = -1
+        self.m = 0
+        self.aliveSlaves = []
+        self.servers = []
+        self.initGraph = None
+        self.graphProcessor = None
         pass
 
-    '''Save the selfrvers'''
+    '''Save the servers'''
     def saveServerInfo(self, netString):
         self.servers = server.netStringToServerList(netString)
         self.aliveSlaves = filter(lambda s : s.role=='slave' and s.alive, self.servers)
@@ -35,13 +39,9 @@ class Main:
         BloomHashFilter = BloomFilter(10**7, 1e-7)
         self.initGraph = graph.stringToGraph(netString)
 
-    '''Return the task represented by given string.'''
-    def receivePoppedTask(self, netString):
-        return task.toTaskFromNetString(netString)
-
     def startProcessing(self, netString):
         taskRetries = 0
-        graphProcessor = ExtendSubgraph(self.graph, self.p, self.m)
+        self.graphProcessor = ExtendSubgraph(self.graph, self.p, self.m)
         while taskRetries < MAX_RETRIES :
             # TODO getNewTask return a task else none
             task = getNewTask(TaskQueue)
@@ -50,7 +50,7 @@ class Main:
                 continue
             else :
                 taskRetries = 0
-                newTasks = graphProcessor.generateNewTasks(task)
+                newTasks = self.graphProcessor.generateNewTasks(task)
                 for tasks in newTasks :
                     # TODO checkUniquenessOfTask
                     if checkUniquenessOfTask(tasks) :
@@ -62,9 +62,6 @@ class Main:
 
     def getPartialResult(self, netString):
         # return netString of result
-        pass
-
-    def processHashResponse(self, netString):
         pass
 
     def recordPing(self, netString):
@@ -86,4 +83,19 @@ def putHash(message):
 
 '''Check a given hash and return the response'''
 def checkHash(message):
+    pass
+
+'''Return the task represented by given string.'''
+def receivePoppedTask(self, netString):
+    return task.toTaskFromNetString(netString)
+
+'''Given a task return true if it has not been seen yet'''
+def checkUniquenessOfTask():
+    pass
+
+'''Get a new task,
+first check the local task queue for a task
+if no task is found then try to get task from a random slave
+if that also fails then wait and return None'''
+def getNewTask():
     pass
