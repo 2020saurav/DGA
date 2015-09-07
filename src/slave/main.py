@@ -46,9 +46,6 @@ class Main:
     def recordPing(self, netString):
         pass
 
-    def recordPong(self, netString):
-        pass
-
     def unrecognizedMessage(self, netString):
         pass
 

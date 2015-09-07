@@ -40,8 +40,6 @@ def handler(sc, address):
     elif words[0] == 'PING':
         Slave.recordPing(message)
         network.send(sc, 'PONG')
-    elif words[0] == 'PONG':
-        Slave.recordPong(message)
     else:
         Slave.unrecognizedMessage(message)
 

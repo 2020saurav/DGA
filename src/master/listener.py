@@ -26,8 +26,6 @@ def handler(sc, address):
     elif words[0] == 'PING':
         Master.recordPing(message)
         network.send(sc, 'PONG')
-    elif words[0] == 'PONG':
-        Master.recordPong(message)
     elif words[0] == 'PARTIALRESULT':
         Master.processPartialResult(message)
     elif words[0] == 'JOBCOMPLETE':

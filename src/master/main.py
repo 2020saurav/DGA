@@ -41,10 +41,6 @@ class Main:
         # Log this
         pass
 
-    def recordPong(self, netString):
-        # Log this
-        pass
-
     def processPartialResult(self, netString):
         # parse result from a slave and store it to finally merge all results
         pass
@@ -55,8 +51,7 @@ class Main:
         pass
 
     def unrecognizedMessage(self, netString):
-        # Log this
-        pass
+        log.debug("Unrecognized Message: " + netString)
 
     def sendPingForAliveTest(self, server):
         log.info('Sending ping to server ' + server.ID)
@@ -74,3 +69,4 @@ class Main:
         for s in self.servers:
             if s.ID == serverId:
                 s.alive = isAlive
+                break
