@@ -21,14 +21,6 @@ class Main:
     def getServerListNetString(self):
         return server.listToNetString(servers)
 
-    def sendServerListToSlaves(self):
-        # We are sending details of Master server also to alive slaves
-        # Slaves should figure out alive slaves and Master server themselves from this information
-        slaves = filter(lambda s: s.role=="slave" and s.alive, servers)
-        message = server.listToNetString(servers)
-        for slave in slaves:
-            network.sendToIP(slave.IP, slave.port, message)
-
     def processInput(self, netString):
         # Receive input from client. Parse it and form appropriate data structures
         pass
@@ -70,3 +62,24 @@ class Main:
             if s.ID == serverId:
                 s.alive = isAlive
                 break
+
+    def sendGraphToSlaves(self):
+        aliveSlaves = filter(lambda s: s.role=='slave' and s.alive, self.servers)
+        for slave in aliveSlaves:
+            # form netString of Graph and do network.send
+            pass
+
+    def sendServerListToSlaves(self):
+        aliveSlaves = filter(lambda s: s.role=="slave" and s.alive, servers)
+        message = server.listToNetString(servers)
+        for slave in aliveSlaves:
+            network.sendToIP(slave.IP, slave.port, message)
+
+    def sendInitialTaskToSlaves(self):
+        pass
+
+    def sendProcessStartNotification(self):
+        aliveSlaves = filter(lambda s: s.role=="slave" and s.alive, servers)
+        message = 'STARTPROCESSING'
+        for slave in aliveSlaves:
+            network.sendToIP(slave.IP, slave.port, message)       
