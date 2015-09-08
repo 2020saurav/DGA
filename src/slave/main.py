@@ -120,7 +120,7 @@ def putHash(message):
 def checkHash(message):
     hashToCheck = int(message)
     log.info('Hash check query received')
-    return HASHRESPONSE + MESSAGE_DELIMITER + BloomHashFilter.checkAndInsert(hashToCheck)
+    return HASHRESPONSE + MESSAGE_DELIMITER + str(BloomHashFilter.checkAndInsert(hashToCheck))
 
 '''Given a task return true if it has not been seen yet'''
 def checkUniquenessOfTask(bloomHash, slaveToContact):
