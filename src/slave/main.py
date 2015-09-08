@@ -107,7 +107,7 @@ def checkUniquenessOfTask(bloomHash, slaveToContact):
     # Note : this call will simultaneously put the hash
     # into the bloom filter if it was not present already
     words = hashCheckResponse.split(MESSAGE_DELIMITER)
-    return not bool(words[1])
+    return not (words[1]=='True')
 
 '''Get a new task,
 first check the local task queue for a task
@@ -127,5 +127,7 @@ def getNewTask(main):
         if messageHead == EMPTYTASK :
             time.sleep(UNSUCCESSFUL_GET_TASK_WAIT_TIME)
             return None
-        else :
+        elif messageHead == POPPEDTASK :
             return task.toTaskFromNetString(MESSAGE_DELIMITER.join(words[1:]))
+        else :
+            main.unrecognizedMessage()

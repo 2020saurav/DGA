@@ -37,7 +37,7 @@ class BloomFilter:
                 return False
         return True
 
-    '''Returns Ture if given value has been already inserted False otherwise
+    '''Returns True if given value has been already inserted False otherwise
     Also stores the hash in bloom filter on the fly'''
     def checkAndInsert(self,num):
         wasPresent = True
