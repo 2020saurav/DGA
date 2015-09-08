@@ -50,6 +50,8 @@ class Main:
         self.graphProcessor = ExtendSubgraph(self.graph, self.p, self.m)
         while taskRetries < MAX_RETRIES :
             task = getNewTask(self)
+            # TODO remove this later
+            log.debug(task.toNetString())
             if task == None :
                 taskRetries += 1
                 continue
@@ -60,6 +62,7 @@ class Main:
                     if checkUniquenessOfTask(newTask.bloomHash, self.aliveSlaves[serverHash]) :
                        TaskQueue.put(newTask)
         log.info('It seems current task is complete.')
+        self.sendJobCompletionNotiToMaster()
         # TODO send job completion notification to master
 
     def getPartialResult(self, netString):
@@ -77,6 +80,10 @@ class Main:
 
     def saveNetworkPrime(self,message):
         self.p = int(message)
+
+    def sendJobCompletionNotiToMaster(self):
+        masterServer = filter(lambda s : s.role=='master' and s.alive, self.servers)[0]
+        sendToIP(masterServer.IP, masterServer.port, JOBCOMPLETE)
 
 def grantTask():
     # return netString of task
