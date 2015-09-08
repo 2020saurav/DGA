@@ -5,13 +5,16 @@ import src.util.task as task
 from src.util.bloom import BloomFilter
 from src.connectedSubgraph.extendSubgraph import ExtendSubgraph
 from config.networkParams import *
+from config.host import *
+from config.messageHeads import *
 from random import randint
 import src.util.logger as logger
 import time
+import Queue
 
 # TODO save a graph to a persistent file before pushing it into the task queue
-TaskQueue = None
-BloomHashFilter = None
+TaskQueue = Queue.Queue()
+BloomHashFilter = BloomFilter(10**7, 1e-7)
 
 log = logger.getLogger("Slave-Main")
 
@@ -31,35 +34,36 @@ class Main:
         self.servers = []
         self.initGraph = None
         self.graphProcessor = None
-        pass
 
     '''Save the servers'''
     def saveServerInfo(self, netString):
         self.servers = server.netStringToServerList(netString)
         self.aliveSlaves = filter(lambda s : s.role=='slave' and s.alive, self.servers)
-        self.m = len(aliveSlaves)
+        self.m = len(self.aliveSlaves)
+        log.info("Server informations saved")
 
     '''Save the inital graph passed by master'''
     def saveGraph(self, netString):
-        TaskQueue = Queue.Queue()
-        BloomHashFilter = BloomFilter(10**7, 1e-7)
         self.initGraph = graph.stringToGraph(netString)
+        log.info("Graph saved")
 
     def startProcessing(self, netString):
         taskRetries = 0
-        self.graphProcessor = ExtendSubgraph(self.graph, self.p, self.m)
+        log.info('Processing started')
+        self.graphProcessor = ExtendSubgraph(self.initGraph, self.p, self.m)
         while taskRetries < MAX_RETRIES :
             task = getNewTask(self)
             # TODO remove this later
-            log.debug(task.toNetString())
             if task == None :
                 taskRetries += 1
+                log.debug("No new task found")
                 continue
             else :
+                log.debug("Task's string : " + task.toNetString())
                 taskRetries = 0
                 newTasks = self.graphProcessor.generateNewTasks(task)
                 for newTask in newTasks :
-                    if checkUniquenessOfTask(newTask.bloomHash, self.aliveSlaves[serverHash]) :
+                    if checkUniquenessOfTask(newTask.bloomHash, self.aliveSlaves[newTask.serverHash]) :
                        TaskQueue.put(newTask)
         log.info('It seems current task is complete.')
         self.sendJobCompletionNotiToMaster()
@@ -70,35 +74,41 @@ class Main:
         pass
 
     def recordPing(self, netString):
-        log.info('Responded to master\'s ping.')
+        log.info("Responded to master's ping.")
 
     def unrecognizedMessage(self, netString):
-        pass
+        log.error("Unrecognized Message received " + netString)
 
     def sendHeartBeatToMaster(self):
         pass
 
     def saveNetworkPrime(self,message):
         self.p = int(message)
+        log.info("Prime saved")
 
     def sendJobCompletionNotiToMaster(self):
         masterServer = filter(lambda s : s.role=='master' and s.alive, self.servers)[0]
-        sendToIP(masterServer.IP, masterServer.port, JOBCOMPLETE)
+        network.sendToIP(masterServer.IP, masterServer.port, JOBCOMPLETE)
+        log.info("Job completion notification sent")
+
 
 def grantTask():
     # return netString of task
     # return 'EMPTYTASK' if task queue is empty currently
     # else return a task prepended with 'POPPEDTASK'
     if TaskQueue.empty() :
+        log.debug("Empty Task returned")
         return EMPTYTASK
     else :
         poppedTask = TaskQueue.get()
         message = POPPEDTASK + MESSAGE_DELIMITER + poppedTask.toNetString()
+        log.debug("Popped Task returned")
         return message
 
 '''Insert a given task in the task queue'''
 def pushTaskToQueue(netString):
     TaskQueue.put(task.toTaskFromNetString(netString))
+    log.info("Task pushed in queue")
 
 ''' Put a given hash into bloom filter '''
 def putHash(message):
@@ -109,13 +119,17 @@ def putHash(message):
     and return the response'''
 def checkHash(message):
     hashToCheck = int(message)
-    return HASHRESPONSE + MESSAGE_DELIMITER +\
-            BloomHashFilter.checkAndInsert(hashToCheck)
+    log.info('Hash check query received')
+    return HASHRESPONSE + MESSAGE_DELIMITER + BloomHashFilter.checkAndInsert(hashToCheck)
 
 '''Given a task return true if it has not been seen yet'''
 def checkUniquenessOfTask(bloomHash, slaveToContact):
     # TODO optimize to aviod network call if server is local
     message = HASHCHECK + MESSAGE_DELIMITER + str(bloomHash)
+    # if slaveToContact is itself
+    if slaveToContact.ID == HOST_ID:
+        return not BloomHashFilter.checkAndInsert(bloomHash)
+
     hashCheckResponse = network.sendAndGetResponseFromIP(
             slaveToContact.IP,
             slaveToContact.port,
@@ -133,7 +147,7 @@ def getNewTask(main):
     if not TaskQueue.empty() :
         return TaskQueue.get()
     else :
-        randomSlave = main.aliveSlaves[randint(0,main.m)]
+        randomSlave = main.aliveSlaves[randint(0, main.m - 1)]
         newTaskString = network.sendAndGetResponseFromIP(
             randomSlave.IP,
             randomSlave.port,

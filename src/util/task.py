@@ -2,7 +2,7 @@ from config.networkParams import *
 
 class Task:
     ''' Task contains necessary information to process the subgraph.
-    Since we intend to proceed by growing edges, we need to keep the list edges we can grow in the 
+    Since we intend to proceed by growing edges, we need to keep the list edges we can grow in the
     next step, list of vertices already processed, bloom-filter hash and the slave hash.
     '''
     '''
@@ -11,7 +11,7 @@ class Task:
     bloomHash : ###
     serverHash : ###
     '''
-    def __init__(self, vertices, edges, bloomHash, serverHash): 
+    def __init__(self, vertices, edges, bloomHash, serverHash):
         self.vertices = vertices
         self.edges = edges
         self.bloomHash = bloomHash
@@ -39,6 +39,6 @@ def toTaskFromNetString(netString):
     vertices = map(lambda c: int(c), array[0])
     edgeCount = int(array[1])
     edges = map(lambda i: int(i), array[2:-2])
-    bloomHash = array[-2]
-    serverHash = array[-1]
+    bloomHash = int(array[-2])
+    serverHash = int(array[-1])
     return Task(vertices, edges, bloomHash, serverHash)

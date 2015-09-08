@@ -1,6 +1,7 @@
 import socket
 from config.networkParams import *
 from config.messageHeads import *
+from config.host import *
 import src.util.logger as logger
 
 log = logger.getLogger("Network-Util")
@@ -39,14 +40,14 @@ def sendAndGetResponse(sock, message):
     return resp
 
 def sendPingForAliveTest(server):
-    log.info('Sending ping to server ' + server.ID)
-    netString = PING + MESSAGE_DELIMITER + HOST_ID
+    log.info('Sending ping to server ' + server.ID + ' ' + server.IP + ':' + str(server.port))
+    message = PING + MESSAGE_DELIMITER + HOST_ID
     try:
         # TODO add timeout here
-        response = network.sendAndGetResponseFromIP(server.IP, server.port)
+        response = sendAndGetResponseFromIP(server.IP, server.port, message)
         log.info('PING response received from server ' + server.ID + ': '+ response)
         return True
     except:
         response = None
-        log.error('No PING response from server ' + server.ID + '. Marking it dead.')
+        log.error('No PING response from server ' + server.ID + '. Marking it dead.', exc_info=True)
         return False

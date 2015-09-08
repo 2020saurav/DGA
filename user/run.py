@@ -1,15 +1,14 @@
-'''After setting up the system. 
+'''After setting up the system.
 i.e. stating the listener for master and all slaves
 User runs this program to compute the result.
-The input is passed to master which then handles 
+The input is passed to master which then handles
 everything aterwards.'''
 
 import socket
 from src.graph.graph import Graph
 from config.servers import servers
 from config.networkParams import MESSAGE_DELIMITER
-import src.util.server
-import src.util.network
+import src.util.network as network
 
 def readInput():
     '''First line contains two arguments

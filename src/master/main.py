@@ -43,7 +43,9 @@ class Main:
         self.sendNetwokPrime()
         self.sendGraphToSlaves()
         self.sendServerListToSlaves()
+        time.sleep(1)
         self.sendInitialTaskToSlaves()
+        time.sleep(1)
         self.sendProcessStartNotification()
         while self.jobCompletedSlaveCount < self.m :
             # wait for processing to get over
@@ -84,11 +86,11 @@ class Main:
 
     def sendInitialTaskToSlaves(self):
         tasks = initTasks.genInitalTasks(self.graph, self.p, self.m)
+        log.info(str(len(tasks)) + " initial tasks created")
         for t in tasks:
-            slaveIndex = randint(0, len(aliveSlaves))
-            slaveServer = aliveSlaves[slaveIndex]
-            message = PUSHTASK + MESSAGE_DELIMITER
-            message += t.toNetString()
+            slaveIndex = randint(0, len(self.aliveSlaves)-1)
+            slaveServer = self.aliveSlaves[slaveIndex]
+            message = PUSHTASK + MESSAGE_DELIMITER + t.toNetString()
             network.sendToIP(slaveServer.IP, slaveServer.port, message)
             log.info("Initial task sent to server " + slaveServer.ID)
 
@@ -106,6 +108,8 @@ class Main:
 
 def getServersAfterPingTests(servers):
     for s in servers:
+        if s.role == "master":
+            continue
         s.alive = network.sendPingForAliveTest(s)
         log.info("Server " + s.ID + " alive: " + str(s.alive))
     return servers
