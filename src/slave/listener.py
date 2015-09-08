@@ -39,6 +39,8 @@ def handler(sc, address):
     elif messageHead == PING:
         Slave.recordPing(message)
         network.send(sc, PONG)
+    elif messageHead == NETWORKPRIME:
+        Slave.saveNetworkPrime(message)
     else:
         Slave.unrecognizedMessage(message)
 

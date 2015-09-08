@@ -9,6 +9,7 @@ import src.connectedSubgraph.initTasks as initTasks
 import src.util.primes as primes
 import src.graph.graph as graph
 from random import randint
+import time
 
 log = logger.getLogger("Master-Main")
 
@@ -26,12 +27,28 @@ class Main:
         self.aliveSlaves = filter(lambda s: s.role=='slave' and s.alive, self.servers)
         self.m = len(self.aliveSlaves)
         self.p = primes.getLargeRandomPrime()
+        self.jobCompletedSlaveCount = 0
 
     def getServerListNetString(self):
         return server.listToNetString(servers)
 
     def processInput(self, netString):
+        try :
+            assert self.jobCompletedSlaveCount == 0
+            log.info("Starting processing of new input.")
+        except :
+            log.warn("Another graph processing in progress. Retry later.")
+            return -1
         self.graph = graph.stringToGraph(netString)
+        self.sendNetwokPrime()
+        self.sendGraphToSlaves()
+        self.sendServerListToSlaves()
+        self.sendInitialTaskToSlaves()
+        self.sendProcessStartNotification()
+        while self.jobCompletedSlaveCount < self.m :
+            # wait for processing to get over
+            time.sleep(JOB_NOT_FINISHED_WAIT_TIME)
+        log.info("Job completed. Waiting for next input.")
 
     def recordHeartBeat(self, netString):
         # Store heart beat information. Server ID will be present in message
@@ -44,10 +61,10 @@ class Main:
         # parse result from a slave and store it to finally merge all results
         pass
 
-    def recordJobCompleteNotification(self, netString):
+    def recordJobCompleteNotification(self):
         # Increase count of slaves with completed tasks
-        # Ask for partial result(?) or ask when all slaves are done
-        pass
+        self.jobCompletedSlaveCount += 1
+        # TODO ask for the processed result in parallel
 
     def unrecognizedMessage(self, netString):
         log.debug("Unrecognized Message: " + netString)
@@ -79,7 +96,13 @@ class Main:
         message = STARTPROCESSING
         for slave in self.aliveSlaves:
             network.sendToIP(slave.IP, slave.port, message)
-            log.info("Start Processing message sent to server " + slave.ID)      
+            log.info("Start Processing message sent to server " + slave.ID)
+
+    def sendNetwokPrime(self):
+        message = NETWORKPRIME + MESSAGE_DELIMITER + str(self.p)
+        for slave in self.aliveSlaves:
+            network.sendToIP(slave.IP, slave.port, message)
+            log.info("Network prime sent to " + slave.ID)
 
 def getServersAfterPingTests(servers):
     for s in servers:

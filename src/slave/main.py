@@ -6,10 +6,14 @@ from src.util.bloom import BloomFilter
 from src.connectedSubgraph.extendSubgraph import ExtendSubgraph
 from config.networkParams import *
 from random import randint
+import src.util.logger as logger
 import time
 
+# TODO save a graph to a persistent file before pushing it into the task queue
 TaskQueue = None
 BloomHashFilter = None
+
+log = logger.getLogger("Slave-Main")
 
 class Main:
     ''' This Main class of Slave server is intended for following tasks:
@@ -55,19 +59,24 @@ class Main:
                 for newTask in newTasks :
                     if checkUniquenessOfTask(newTask.bloomHash, self.aliveSlaves[serverHash]) :
                        TaskQueue.put(newTask)
+        log.info('It seems current task is complete.')
+        # TODO send job completion notification to master
 
     def getPartialResult(self, netString):
         # return netString of result
         pass
 
     def recordPing(self, netString):
-        pass
+        log.info('Responded to master\'s ping.')
 
     def unrecognizedMessage(self, netString):
         pass
 
     def sendHeartBeatToMaster(self):
         pass
+
+    def saveNetworkPrime(self,message):
+        self.p = int(message)
 
 def grantTask():
     # return netString of task

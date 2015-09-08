@@ -40,6 +40,7 @@ def sendPingForAliveTest(server):
     log.info('Sending ping to server ' + server.ID)
     netString = PING + MESSAGE_DELIMITER + HOST_ID
     try:
+        # TODO add timeout here
         response = network.sendAndGetResponseFromIP(server.IP, server.port)
         log.info('PING response received from server ' + server.ID + ': '+ response)
         return True
