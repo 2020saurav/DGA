@@ -6,6 +6,8 @@ import src.util.logger as logger
 log = logger.getLogger("Network-Util")
 
 def messageLength(message):
+    if len(message) >= 10**MESSAGE_LENGTH_DIGITS:
+        log.error("Message length exceeds network limit", exc_info=True)
     return str(('%0'+str(MESSAGE_LENGTH_DIGITS)+'d')%len(message))
 
 def sendToIP(IP, port, message):
