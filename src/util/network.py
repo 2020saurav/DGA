@@ -16,27 +16,33 @@ def sendToIP(IP, port, message):
     s.connect((IP, port))
     s.send(messageLength(message))
     s.send(message)
+    log.info("Message sent to IP " + IP + ':' + str(port))
     s.close()
 
 def send(sock, message):
     sock.send(messageLength(message))
     sock.send(message)
+    log.info("Message sent to socket")
 
 def sendAndGetResponseFromIP(IP, port, message):
     s = socket.socket()
     s.connect((IP, port))
     s.send(messageLength(message))
     s.send(message)
+    log.info("Message sent to IP " + IP + ':' + str(port))
     respLen = int(s.recv(MESSAGE_LENGTH_DIGITS))
     resp = s.recv(respLen)
+    log.info("Response received. Length: " + len(resp))
     s.close()
     return resp
 
 def sendAndGetResponse(sock, message):
     sock.send(messageLength(message))
     sock.send(message)
+    log.info("Message sent to socket")
     respLen = int(sock.recv(MESSAGE_LENGTH_DIGITS))
     resp = sock.recv(respLen)
+    log.info("Response received. Length: " + len(resp))
     return resp
 
 def sendPingForAliveTest(server):
