@@ -41,7 +41,7 @@ class Main:
     def saveServerInfo(self, netString):
         self.servers = server.netStringToServerList(netString)
         self.aliveSlaves = filter(lambda s : s.role=='slave' and s.alive, self.servers)
-            self.m = len(self.aliveSlaves)
+        self.m = len(self.aliveSlaves)
         log.info("Server informations saved")
 
     '''Save the inital graph passed by master'''

@@ -1,4 +1,5 @@
 from math import log
+import array
 from primes import nextPrime
 from random import randint, seed
 
@@ -10,7 +11,9 @@ class BloomFilter:
         #total size of bit array
         self.n = n
         self.m = nextPrime((int)(-n * log(failureProb) / (log(2)**2)))
-        self.filter = [False]*self.m
+        self.filter = array.array('c')
+        for i in range(0,self.m):
+            self.filter.append('0')
         self.k = (int)(self.m*(log(2))/self.n)
         seed()
         self.hashes = [(randint(0,self.m-1),randint(0,self.m-1)) for i in range(0,self.k)]
@@ -18,7 +21,9 @@ class BloomFilter:
     '''Reinitialize the bloom filter with new hash functions'''
     def clean(self):
         del self.filter
-        self.filter = [False]*self.m
+        self.filter = array.array('c')
+        for i in range(0,self.m):
+            self.filter.append('0')
         del self.hashes
         seed()
         self.hashes = [(randint(0,self.m-1),randint(0,self.m-1)) for i in range(0,self.k)]
@@ -28,12 +33,12 @@ class BloomFilter:
     def insert(self,num):
         #Can be parallelized
         for i in range(0,self.k):
-            self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m]=True
+            self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m]='1'
 
     '''Returns Ture if given value has been already inserted'''
     def check(self,num):
         for i in range(0,self.k):
-            if self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m] == False:
+            if self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m] == '0':
                 return False
         return True
 
@@ -43,7 +48,7 @@ class BloomFilter:
         wasPresent = True
         for i in range(0,self.k):
             idx = (self.hashes[i][0]*num + self.hashes[i][1])%self.m
-            if self.filter[idx] == False:
+            if self.filter[idx] == '0':
                 wasPresent = False
-                self.filter[idx] = True
+                self.filter[idx] = '1'
         return wasPresent
