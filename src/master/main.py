@@ -10,8 +10,10 @@ import src.util.primes as primes
 import src.graph.graph as graph
 from random import randint
 import time
+import threading
 
 log = logger.getLogger("Master-Main")
+taskCounterLock = threading.Lock()
 
 class Main:
     ''' This Main class of Master server is intended for following tasks:
@@ -33,6 +35,7 @@ class Main:
         return server.listToNetString(servers)
 
     def processInput(self, netString):
+        startTime = time.time()
         try :
             assert self.jobCompletedSlaveCount == 0
             log.info("Starting processing of new input.")
@@ -40,17 +43,20 @@ class Main:
             log.warn("Another graph processing in progress. Retry later.")
             return -1
         self.graph = graph.stringToGraph(netString)
-        self.sendNetwokPrime()
+        self.sendNetworkPrime()
         self.sendGraphToSlaves()
         self.sendServerListToSlaves()
-        time.sleep(1)
         self.sendInitialTaskToSlaves()
-        time.sleep(1)
         self.sendProcessStartNotification()
+        self.totalTaskCount = 0
         while self.jobCompletedSlaveCount < self.m :
             # wait for processing to get over
             time.sleep(JOB_NOT_FINISHED_WAIT_TIME)
-        log.info("Job completed. Waiting for next input.")
+        endTime = time.time()
+        newLog = "Job completed in " + str(endTime-startTime) + " secs." +
+            str(self.totalTaskCount) + " results computed. Waiting for next input."
+        log.info(newLog)
+        print newLog
 
     def recordHeartBeat(self, netString):
         # Store heart beat information. Server ID will be present in message
@@ -63,9 +69,18 @@ class Main:
         # parse result from a slave and store it to finally merge all results
         pass
 
-    def recordJobCompleteNotification(self):
+    def recordJobCompleteNotification(self,message):
         # Increase count of slaves with completed tasks
         self.jobCompletedSlaveCount += 1
+        try:
+            taskCounterLock.acquire()
+            totalTaskCount += int(message)
+            newLog = "New job completion notification. " +
+                str(totalTaskCount) + " results computed so far."
+            log.info(newLog)
+            print newLog
+        finally:
+            taskCounterLock.release()
         # TODO ask for the processed result in parallel
 
     def unrecognizedMessage(self, netString):
@@ -100,7 +115,7 @@ class Main:
             network.sendToIP(slave.IP, slave.port, message)
             log.info("Start Processing message sent to server " + slave.ID)
 
-    def sendNetwokPrime(self):
+    def sendNetworkPrime(self):
         message = NETWORKPRIME + MESSAGE_DELIMITER + str(self.p)
         for slave in self.aliveSlaves:
             network.sendToIP(slave.IP, slave.port, message)

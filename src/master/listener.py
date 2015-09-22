@@ -32,7 +32,7 @@ def handler(sc, address):
     elif messageHead == PARTIALRESULT:
         Master.processPartialResult(message)
     elif messageHead == JOBCOMPLETE:
-        Master.recordJobCompleteNotification()
+        Master.recordJobCompleteNotification(message)
     else:
         Master.unrecognizedMessage(message)
 

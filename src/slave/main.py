@@ -28,18 +28,20 @@ class Main:
     - ###
     '''
     def __init__(self):
-        self.p = -1
-        self.m = 0
+        self.p = None
+        self.m = None
         self.aliveSlaves = []
         self.servers = []
         self.initGraph = None
         self.graphProcessor = None
+        # Currently lock is not required as this will be used
+        self.taskCounter = 0
 
     '''Save the servers'''
     def saveServerInfo(self, netString):
         self.servers = server.netStringToServerList(netString)
         self.aliveSlaves = filter(lambda s : s.role=='slave' and s.alive, self.servers)
-        self.m = len(self.aliveSlaves)
+            self.m = len(self.aliveSlaves)
         log.info("Server informations saved")
 
     '''Save the inital graph passed by master'''
@@ -50,6 +52,11 @@ class Main:
     def startProcessing(self, netString):
         taskRetries = 0
         log.info('Processing started')
+        while True:
+            if not (self.p or self.m or self.initGraph):
+                break
+            log.debug("Waiting for initialization.")
+            time.sleep(WAIT_FOR_INITIALIZATION)
         self.graphProcessor = ExtendSubgraph(self.initGraph, self.p, self.m)
         while taskRetries < MAX_RETRIES :
             task = getNewTask(self)
@@ -60,6 +67,7 @@ class Main:
                 continue
             else :
                 log.debug("Task's string : " + task.toNetString())
+                self.taskCounter += 1
                 taskRetries = 0
                 newTasks = self.graphProcessor.generateNewTasks(task)
                 for newTask in newTasks :
@@ -88,7 +96,8 @@ class Main:
 
     def sendJobCompletionNotiToMaster(self):
         masterServer = filter(lambda s : s.role=='master' and s.alive, self.servers)[0]
-        network.sendToIP(masterServer.IP, masterServer.port, JOBCOMPLETE)
+        network.sendToIP(masterServer.IP, masterServer.port,
+            JOBCOMPLETE + MESSAGE_DELIMITER + str(self.taskCounter))
         log.info("Job completion notification sent")
 
 
