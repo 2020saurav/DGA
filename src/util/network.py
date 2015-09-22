@@ -32,7 +32,7 @@ def sendAndGetResponseFromIP(IP, port, message):
     log.info("Message sent to IP " + IP + ':' + str(port))
     respLen = int(s.recv(MESSAGE_LENGTH_DIGITS))
     resp = s.recv(respLen)
-    log.info("Response received. Length: " + len(resp))
+    log.info("Response received. Length: " + str(len(resp)))
     s.close()
     return resp
 
@@ -42,7 +42,7 @@ def sendAndGetResponse(sock, message):
     log.info("Message sent to socket")
     respLen = int(sock.recv(MESSAGE_LENGTH_DIGITS))
     resp = sock.recv(respLen)
-    log.info("Response received. Length: " + len(resp))
+    log.info("Response received. Length: " + str(len(resp)))
     return resp
 
 def sendPingForAliveTest(server):

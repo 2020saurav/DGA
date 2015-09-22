@@ -2,6 +2,7 @@ from math import log
 import array
 from primes import nextPrime
 from random import randint, seed
+from bitarray import bitarray
 
 class BloomFilter:
     """docstring for BloomFilter
@@ -11,9 +12,9 @@ class BloomFilter:
         #total size of bit array
         self.n = n
         self.m = nextPrime((int)(-n * log(failureProb) / (log(2)**2)))
-        self.filter = array.array('c')
-        for i in range(0,self.m):
-            self.filter.append('0')
+        self.filter = bitarray()
+        self.filter.append(False)
+        self.filter = self.m * self.filter
         self.k = (int)(self.m*(log(2))/self.n)
         seed()
         self.hashes = [(randint(0,self.m-1),randint(0,self.m-1)) for i in range(0,self.k)]
@@ -21,9 +22,9 @@ class BloomFilter:
     '''Reinitialize the bloom filter with new hash functions'''
     def clean(self):
         del self.filter
-        self.filter = array.array('c')
-        for i in range(0,self.m):
-            self.filter.append('0')
+        self.filter = bitarray()
+        self.filter.append(False)
+        self.filter = self.m * self.filter
         del self.hashes
         seed()
         self.hashes = [(randint(0,self.m-1),randint(0,self.m-1)) for i in range(0,self.k)]
@@ -33,12 +34,12 @@ class BloomFilter:
     def insert(self,num):
         #Can be parallelized
         for i in range(0,self.k):
-            self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m]='1'
+            self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m]=True
 
     '''Returns Ture if given value has been already inserted'''
     def check(self,num):
         for i in range(0,self.k):
-            if self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m] == '0':
+            if self.filter[(self.hashes[i][0]*num + self.hashes[i][1])%self.m] == False:
                 return False
         return True
 
@@ -48,7 +49,7 @@ class BloomFilter:
         wasPresent = True
         for i in range(0,self.k):
             idx = (self.hashes[i][0]*num + self.hashes[i][1])%self.m
-            if self.filter[idx] == '0':
+            if self.filter[idx] == False:
                 wasPresent = False
-                self.filter[idx] = '1'
+                self.filter[idx] = True
         return wasPresent

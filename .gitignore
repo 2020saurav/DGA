@@ -2,5 +2,6 @@
 logs/
 config/logConfig.py
 config/host.py
+config/servers.py
 input/
 output/

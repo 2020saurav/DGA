@@ -53,7 +53,7 @@ class Main:
         taskRetries = 0
         log.info('Processing started')
         while True:
-            if not (self.p or self.m or self.initGraph):
+            if (self.p != None and self.m != None and self.initGraph != None):
                 break
             log.debug("Waiting for initialization.")
             time.sleep(WAIT_FOR_INITIALIZATION)

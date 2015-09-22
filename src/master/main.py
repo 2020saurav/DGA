@@ -53,7 +53,7 @@ class Main:
             # wait for processing to get over
             time.sleep(JOB_NOT_FINISHED_WAIT_TIME)
         endTime = time.time()
-        newLog = "Job completed in " + str(endTime-startTime) + " secs." +
+        newLog = "Job completed in " + str(endTime-startTime) + " secs." + \
             str(self.totalTaskCount) + " results computed. Waiting for next input."
         log.info(newLog)
         print newLog
@@ -74,9 +74,9 @@ class Main:
         self.jobCompletedSlaveCount += 1
         try:
             taskCounterLock.acquire()
-            totalTaskCount += int(message)
-            newLog = "New job completion notification. " +
-                str(totalTaskCount) + " results computed so far."
+            self.totalTaskCount += int(message)
+            newLog = "New job completion notification. " + \
+                str(self.totalTaskCount) + " results computed so far."
             log.info(newLog)
             print newLog
         finally:
