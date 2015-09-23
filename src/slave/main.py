@@ -35,7 +35,7 @@ class Main:
         self.initGraph = None
         self.graphProcessor = None
         # Currently lock is not required as this will be used
-        self.taskCounter = 0
+        self.taskCounter = None
 
     '''Save the servers'''
     def saveServerInfo(self, netString):
@@ -51,6 +51,7 @@ class Main:
 
     def startProcessing(self, netString):
         taskRetries = 0
+        self.taskCounter = 0
         log.info('Processing started')
         while True:
             if (self.p != None and self.m != None and self.initGraph != None):
@@ -99,6 +100,8 @@ class Main:
         network.sendToIP(masterServer.IP, masterServer.port,
             JOBCOMPLETE + MESSAGE_DELIMITER + str(self.taskCounter))
         log.info("Job completion notification sent")
+        # Clean bloom filter and wait for next input
+        BloomHashFilter.clean()
 
 
 def grantTask():
