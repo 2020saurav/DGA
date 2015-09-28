@@ -30,6 +30,7 @@ class Main:
         self.m = len(self.aliveSlaves)
         self.p = primes.getLargeRandomPrime()
         self.jobCompletedSlaveCount = 0
+        self.jobInProgress = False
 
     def getServerListNetString(self):
         return server.listToNetString(servers)
@@ -37,7 +38,8 @@ class Main:
     def processInput(self, netString):
         startTime = time.time()
         try :
-            assert self.jobCompletedSlaveCount == 0
+            assert not self.jobInProgress
+            self.jobInProgress = True
             log.info("Starting processing of new input.")
         except :
             log.warn("Another graph processing in progress. Retry later.")
@@ -57,6 +59,8 @@ class Main:
             str(self.totalTaskCount) + " results computed. Waiting for next input."
         log.info(newLog)
         print newLog
+        self.jobCompletedSlaveCount = 0
+        self.jobInProgress = False
 
     def recordHeartBeat(self, netString):
         # Store heart beat information. Server ID will be present in message
@@ -71,11 +75,11 @@ class Main:
 
     def recordJobCompleteNotification(self,message):
         # Increase count of slaves with completed tasks
-        self.jobCompletedSlaveCount += 1
         try:
             taskCounterLock.acquire()
+            self.jobCompletedSlaveCount += 1
             self.totalTaskCount += int(message)
-            newLog = "New job completion notification. " + \
+            newLog = "New job completion notification. Computed " + message + " results. "+ \
                 str(self.totalTaskCount) + " results computed so far."
             log.info(newLog)
             print newLog
