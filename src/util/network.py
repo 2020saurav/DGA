@@ -13,12 +13,18 @@ def messageLength(message):
     return str(('%0'+str(MESSAGE_LENGTH_DIGITS)+'d')%len(message))
 
 def sendToIP(IP, port, message):
-    s = socket.socket()
-    s.connect((IP, port))
-    s.send(messageLength(message))
-    s.send(message)
-    log.info("Message sent to IP " + IP + ':' + str(port))
-    s.close()
+    try:
+        s = socket.socket()
+        s.settimeout(SOCKET_TIMEOUT)
+        s.connect((IP, port))
+        s.send(messageLength(message))
+        s.send(message)
+        log.info("Message sent to IP " + IP + ':' + str(port))
+        s.close()
+    except Exception, e:
+        log.error("Error in send (IP): " + str(e) + ". Retrying...")
+        time.sleep(WAIT_AFTER_TIMEOUT_EXCEPTION)
+        sendToIP(IP, port, message)
 
 def send(sock, message):
     sock.send(messageLength(message))
@@ -28,6 +34,7 @@ def send(sock, message):
 def sendAndGetResponseFromIP(IP, port, message):
     try:
         s = socket.socket()
+        s.settimeout(SOCKET_TIMEOUT)
         s.connect((IP, port))
         s.send(messageLength(message))
         s.send(message)
