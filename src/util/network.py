@@ -40,7 +40,7 @@ def sendAndGetResponseFromIP(IP, port, message):
     except Exception, e:
         log.error("Error in send and get (IP): " + str(e) + ". Retrying...")
         time.sleep(WAIT_AFTER_TIMEOUT_EXCEPTION)
-        sendAndGetResponseFromIP(IP, port, message)
+        return sendAndGetResponseFromIP(IP, port, message)
 
 def sendAndGetResponse(sock, message):
     try:
@@ -54,7 +54,7 @@ def sendAndGetResponse(sock, message):
     except Exception, e:
         log.error("Error in send and get (socket): " + str(e) + ". Retrying...")
         time.sleep(WAIT_AFTER_TIMEOUT_EXCEPTION)
-        sendAndGetResponseFromIP(IP, port, message)
+        return sendAndGetResponseFromIP(IP, port, message)
 
 def sendPingForAliveTest(server):
     log.info('Sending ping to server ' + server.ID + ' ' + server.IP + ':' + str(server.port))
