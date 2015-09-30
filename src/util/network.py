@@ -19,7 +19,7 @@ def sendToIP(IP, port, message):
         s.connect((IP, port))
         s.send(messageLength(message))
         s.send(message)
-        log.info("Message sent to IP " + IP + ':' + str(port))
+        # log.info("Message sent to IP " + IP + ':' + str(port))
         s.close()
     except Exception, e:
         log.error("Error in send (IP): " + str(e) + ". Retrying...")
@@ -29,7 +29,7 @@ def sendToIP(IP, port, message):
 def send(sock, message):
     sock.send(messageLength(message))
     sock.send(message)
-    log.info("Message sent to socket")
+    # log.info("Message sent to socket")
 
 def sendAndGetResponseFromIP(IP, port, message):
     try:
@@ -38,10 +38,10 @@ def sendAndGetResponseFromIP(IP, port, message):
         s.connect((IP, port))
         s.send(messageLength(message))
         s.send(message)
-        log.info("Message sent to IP " + IP + ':' + str(port))
+        # log.info("Message sent to IP " + IP + ':' + str(port))
         respLen = int(s.recv(MESSAGE_LENGTH_DIGITS))
         resp = s.recv(respLen)
-        log.info("Response received. Length: " + str(len(resp)))
+        # log.info("Response received. Length: " + str(len(resp)))
         s.close()
         return resp
     except Exception, e:
@@ -53,10 +53,10 @@ def sendAndGetResponse(sock, message):
     try:
         sock.send(messageLength(message))
         sock.send(message)
-        log.info("Message sent to socket")
+        # log.info("Message sent to socket")
         respLen = int(sock.recv(MESSAGE_LENGTH_DIGITS))
         resp = sock.recv(respLen)
-        log.info("Response received. Length: " + str(len(resp)))
+        # log.info("Response received. Length: " + str(len(resp)))
         return resp
     except Exception, e:
         log.error("Error in send and get (socket): " + str(e) + ". Retrying...")
