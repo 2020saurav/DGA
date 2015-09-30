@@ -3,6 +3,7 @@ import src.util.server as server
 import src.graph.graph as graph
 import src.util.task as task
 from src.util.bloom import BloomFilter
+from src.util.stats import Stats
 from src.connectedSubgraph.extendSubgraph import ExtendSubgraph
 from config.networkParams import *
 from config.host import *
@@ -17,6 +18,7 @@ TaskQueue = Queue.Queue()
 BloomHashFilter = BloomFilter(10**7, 1e-7)
 
 log = logger.getLogger("Slave-Main")
+stats = None
 
 class Main:
     ''' This Main class of Slave server is intended for following tasks:
@@ -51,7 +53,7 @@ class Main:
 
     def startProcessing(self, netString):
         taskRetries = 0
-        self.taskCounter = 0
+        stats = Stats(HOST_ID)
         log.info('Processing started')
         while True:
             if (self.p != None and self.m != None and self.initGraph != None):
@@ -68,13 +70,13 @@ class Main:
                 continue
             else :
                 log.debug("Task's string : " + task.toNetString())
-                self.taskCounter += 1
+                stats.tasksProcessed += 1
                 taskRetries = 0
                 newTasks = self.graphProcessor.generateNewTasks(task)
                 for newTask in newTasks :
                     if checkUniquenessOfTask(newTask.bloomHash, self.aliveSlaves[newTask.serverHash]) :
                        TaskQueue.put(newTask)
-        log.info('It seems current task is complete.')
+        log.info('Task complete')
         self.sendJobCompletionNotiToMaster()
         # TODO send job completion notification to master
 
@@ -98,7 +100,7 @@ class Main:
     def sendJobCompletionNotiToMaster(self):
         masterServer = filter(lambda s : s.role=='master' and s.alive, self.servers)[0]
         network.sendToIP(masterServer.IP, masterServer.port,
-            JOBCOMPLETE + MESSAGE_DELIMITER + str(self.taskCounter))
+            JOBCOMPLETE + MESSAGE_DELIMITER + stats.toNetString()
         log.info("Job completion notification sent")
         # Clean bloom filter and wait for next input
         BloomHashFilter.clean()
@@ -114,6 +116,7 @@ def grantTask():
     else :
         poppedTask = TaskQueue.get()
         message = POPPEDTASK + MESSAGE_DELIMITER + poppedTask.toNetString()
+        stats.tasksGranted += 1
         log.debug("Popped Task returned")
         return message
 
@@ -131,7 +134,8 @@ def putHash(message):
     and return the response'''
 def checkHash(message):
     hashToCheck = int(message)
-    log.info('Hash check query received')
+    # log.info('Hash check query received')
+    stats.hashCheckQueryReceived += 1
     return HASHRESPONSE + MESSAGE_DELIMITER + str(BloomHashFilter.checkAndInsert(hashToCheck))
 
 '''Given a task return true if it has not been seen yet'''
@@ -146,6 +150,7 @@ def checkUniquenessOfTask(bloomHash, slaveToContact):
             slaveToContact.IP,
             slaveToContact.port,
             message)
+    stats.hashCheckQuerySent += 1
     # Note : this call will simultaneously put the hash
     # into the bloom filter if it was not present already
     words = hashCheckResponse.split(MESSAGE_DELIMITER)
