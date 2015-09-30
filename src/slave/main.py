@@ -18,7 +18,7 @@ TaskQueue = Queue.Queue()
 BloomHashFilter = BloomFilter(10**7, 1e-7)
 
 log = logger.getLogger("Slave-Main")
-stats = None
+stats = Stats(HOST_ID)
 
 class Main:
     ''' This Main class of Slave server is intended for following tasks:
@@ -53,7 +53,8 @@ class Main:
 
     def startProcessing(self, netString):
         taskRetries = 0
-        stats = Stats(HOST_ID)
+        stats.reset()
+        self.startTime = time.time()
         log.info('Processing started')
         while True:
             if (self.p != None and self.m != None and self.initGraph != None):
@@ -99,8 +100,10 @@ class Main:
 
     def sendJobCompletionNotiToMaster(self):
         masterServer = filter(lambda s : s.role=='master' and s.alive, self.servers)[0]
+        endTime = time.time()
+        stats.timeTaken = endTime - self.startTime
         network.sendToIP(masterServer.IP, masterServer.port,
-            JOBCOMPLETE + MESSAGE_DELIMITER + stats.toNetString()
+            JOBCOMPLETE + MESSAGE_DELIMITER + stats.toNetString())
         log.info("Job completion notification sent")
         # Clean bloom filter and wait for next input
         BloomHashFilter.clean()

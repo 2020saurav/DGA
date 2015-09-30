@@ -5,6 +5,7 @@ from config.messageHeads import *
 import src.util.network as network
 import src.util.server as server
 import src.util.logger as logger
+import src.util.stats as statLib
 import src.connectedSubgraph.initTasks as initTasks
 import src.util.primes as primes
 import src.graph.graph as graph
@@ -31,6 +32,7 @@ class Main:
         self.p = primes.getLargeRandomPrime()
         self.jobCompletedSlaveCount = 0
         self.jobInProgress = False
+        self.statsList = []
 
     def getServerListNetString(self):
         return server.listToNetString(servers)
@@ -40,6 +42,7 @@ class Main:
         try :
             assert not self.jobInProgress
             self.jobInProgress = True
+            self.statsList = []
             log.info("Starting processing of new input.")
         except :
             log.warn("Another graph processing in progress. Retry later.")
@@ -55,10 +58,10 @@ class Main:
             # wait for processing to get over
             time.sleep(JOB_NOT_FINISHED_WAIT_TIME)
         endTime = time.time()
-        newLog = "Job completed in " + str(endTime-startTime) + " secs." + \
-            str(self.totalTaskCount) + " results computed. Waiting for next input."
-        log.info(newLog)
-        print newLog
+        logMsg = "Total (" + str(self.totalTaskCount) + ") jobs completed in " \
+                + str(endTime-startTime) + "s."
+        log.info(logMsg)
+        printStats(self.statsList, logMsg)
         self.jobCompletedSlaveCount = 0
         self.jobInProgress = False
 
@@ -73,16 +76,15 @@ class Main:
         # parse result from a slave and store it to finally merge all results
         pass
 
-    def recordJobCompleteNotification(self,message):
+    def recordJobCompleteNotification(self, netString):
         # Increase count of slaves with completed tasks
         try:
             taskCounterLock.acquire()
             self.jobCompletedSlaveCount += 1
-            self.totalTaskCount += int(message)
-            newLog = "New job completion notification. Computed " + message + " results. "+ \
-                str(self.totalTaskCount) + " results computed so far."
-            log.info(newLog)
-            print newLog
+            stats = statLib.statsNetStringToObject(netString)
+            self.statsList.append(stats)
+            self.totalTaskCount += stats.tasksProcessed
+            log.info("Job completed by " + stats.hostId)
         finally:
             taskCounterLock.release()
         # TODO ask for the processed result in parallel
@@ -132,3 +134,9 @@ def getServersAfterPingTests(servers):
         s.alive = network.sendPingForAliveTest(s)
         log.info("Server " + s.ID + " alive: " + str(s.alive))
     return servers
+
+def printStats(statsList, logMsg):
+    print "\n---------- STATS ----------"
+    for stat in statsList:
+        stat.pprint()
+    print "\n" + logMsg + " Ready for new input.\n"

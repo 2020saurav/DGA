@@ -9,21 +9,30 @@ class Stats:
         self.hashCheckQuerySent     = 0
         self.tasksProcessed         = 0
         self.tasksGranted           = 0
+        self.timeTaken              = 0
         self.hostId                 = hostId
+
+    def reset(self):
+        self.hashCheckQueryReceived = 0
+        self.hashCheckQuerySent     = 0
+        self.tasksProcessed         = 0
+        self.tasksGranted           = 0
+        self.timeTaken              = 0
 
     def toNetString(self):
         netString  = ''
-        netString += (hostId + MESSAGE_DELIMITER)
+        netString += (self.hostId + MESSAGE_DELIMITER)
         netString += (str(self.hashCheckQueryReceived) + MESSAGE_DELIMITER)
         netString += (str(self.hashCheckQuerySent) + MESSAGE_DELIMITER)
         netString += (str(self.tasksProcessed) + MESSAGE_DELIMITER)
-        netString += str(self.tasksGranted)
+        netString += (str(self.tasksGranted) + MESSAGE_DELIMITER )
+        netString += (str(self.timeTaken))
         return netString
 
     def pprint(self):
         print "Host: ", self.hostId, "\tHCQR: ", self.hashCheckQueryReceived,
-        print "\tHCQS: ", self.hashCheckQuerySent, "\tTasks processed: ", self.tasksProcessed,
-        print "\tTasks Granted: ", self.tasksGranted
+        print "\tHCQS: ", self.hashCheckQuerySent, "\tTasks Processed: ", self.tasksProcessed,
+        print "\tTasks Granted: ", self.tasksGranted, "\tTime Taken: ", self.timeTaken
 
 def statsNetStringToObject(netString):
     array = netString.split(MESSAGE_DELIMITER)
@@ -33,4 +42,5 @@ def statsNetStringToObject(netString):
     stats.hashCheckQuerySent = int(array[2])
     stats.tasksProcessed = int(array[3])
     stats.tasksGranted = int(array[4])
+    stats.timeTaken = float(array[5])
     return stats
