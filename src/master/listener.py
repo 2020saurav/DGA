@@ -15,9 +15,8 @@ Master = main.Main()
 def handler(sc, address):
     messageLength = int(sc.recv(MESSAGE_LENGTH_DIGITS))
     networkMessage = sc.recv(messageLength)
-    words = networkMessage.split(MESSAGE_DELIMITER)
-    message = MESSAGE_DELIMITER.join(words[1:])
-    messageHead = words[0]
+    messageHead = networkMessage[0:MESSAGE_HEAD_LENGTH]
+    message = networkMessage[(MESSAGE_HEAD_LENGTH + 1):] # +1 for delimiter
 
     if messageHead == GETSERVERINFO:
         response = Master.getServerListNetString()

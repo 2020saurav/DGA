@@ -33,6 +33,6 @@ if __name__ == '__main__':
     n, m, edges = readInput()
     graph = Graph(n, m, edges)
     MasterIP, MasterPort = findMasterIpPort()
-    network.sendToIP(MasterIP, MasterPort, "INPUT" + MESSAGE_DELIMITER + graph.toString())
+    network.sendToIP(MasterIP, MasterPort, "INPUT____________" + MESSAGE_DELIMITER + graph.toString())
     # TODO Wait for computation to end
     # merge all output file if required
