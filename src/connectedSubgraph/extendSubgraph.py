@@ -1,5 +1,6 @@
 import copy
 from config.networkParams import MESSAGE_DELIMITER
+from config.networkParams import DUMMY_PROC_WAIT_TIME
 from src.graph.graph import Graph
 from src.util.task import Task
 
@@ -19,6 +20,7 @@ class ExtendSubgraph:
     '''Given a  and a task (vertices, edges, bloomhash
     server hash), generate new task by extending the subgraph.'''
     def generateNewTasks(self,task):
+        self.computeAndSave(task)
         numTasks = len(task.edges)
         newTasks = []
         for i in range(0,numTasks):
@@ -44,6 +46,13 @@ class ExtendSubgraph:
                         newEdges.append(outGoingEdge)
             newTasks.append(Task(newVertices, newEdges, newBloomHash, newServerHash))
         return newTasks
+
+    '''Subroutine / proc to be performed on each coputed subgraph goes here
+        currently its a dummy fucntion which waits for some miliseconds'''
+    def computeAndSave(self,task):
+        '''task contains sufficeint infromation to do any kind of computation of subraph'''
+        time.sleep(DUMMY_PROC_WAIT_TIME)
+        return
 
 def preComputeTwoPow(p,maxEdges):
     twoPowModP = [1]
