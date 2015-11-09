@@ -2,6 +2,8 @@
 
 ### Generating all connected subgraphs of a given graph
 
+##### Presentation: http://www.slideshare.net/SauravKumar145/distributed-graph-algorithms
+
 ##### Algorithm
 
 * Initailly each edge represents a connected subgraph of the given graph.
@@ -17,7 +19,7 @@
 * Each slave also has a task queue which actually consists of subgraphs. A slave will pick a task from any of the task queue(maybe randomly) and process it. After processing it will produce many subgraphs(i.e. tasks for the next stage) which would further be distributed (again maybe randomly) among all the task queues.
 
 
-#### Messaging Protocols
+#### Messaging Protocols (Some are no longer needed. Check config/messageHeads)
 
 - GETSERVERINFO : Request for list of servers from master
 - INPUT : Send input to master
@@ -43,5 +45,8 @@ Instant responses to be returned in cases of GETSERVERINFO, PING, HASHCHECK, REQ
   ```
   export PYTHONPATH="$PYTHONPATH:/path/to/DGA"
   ```
-- Run `python setup.py`
-- ..
+- Run `python setup.py` with args as serverID, serverIPaddr, port
+- Deploy listeners of slaves
+- Update config/servers of master server and deploy its listener
+- Send input to master through user/run.py
+
