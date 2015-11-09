@@ -6,42 +6,45 @@ import sys
 
 filename = "test"
 def printUsage():
-    return
     print "Enter 1 n to generate star graph with n nodes"
     print "Enter 2 n to generate line graph with n nodes"
     print "Enter 3 n to generate a random tree with n nodes"
-    print "Enter 4 n p to generate a graph with n nodes, and"
-    print "each is added to the graph with probability p/nC2"
+    print "Enter 4 n e to generate a graph with n nodes, and"
+    print "each is added to the graph with probability e/nC2"
 
 def star(n):
     sys.stdout = open(filename+'.txt','w')
     print n, n-1
     for i in range(1,n):
         print 0, i
+    sys.stdout.close()
 
 def line(n):
     sys.stdout = open(filename+'.txt','w')
     print n, n-1
     for i in range(0,n-1):
         print i, i+1
+    sys.stdout.close()
 
 def randTree(n):
     sys.stdout = open(filename+'.txt','w')
     print n, n-1
     for i in range(1, n):
         print i, randint(0,i-1)
+    sys.stdout.close()
 
-def randGraph(n, p):
+def randGraph(n, e):
     sys.stdout = open(filename+'.txt','w')
     edges = []
     nc2 = (n*(n-1))/2
     for i in range(0, n):
         for j in range(i+1, n):
             edges.append((i,j))
-    graphEdges = sample(edges, p)
-    print n, p
+    graphEdges = sample(edges, e)
+    print n, e
     for edge in graphEdges:
         print edge[0], edge[1]
+    sys.stdout.close()
 
 def doDotty():
     f = open(filename+".txt", 'r')
@@ -53,6 +56,7 @@ def doDotty():
         print "node" + str(a) + " -- " + "node" + str(b)
     print "}"
     sys.stdout.close()
+    f.close()
     call(["dot","-Tpng",filename+".dot","-o",filename+".png"])
     call(["gnome-open",filename+".png"])
 

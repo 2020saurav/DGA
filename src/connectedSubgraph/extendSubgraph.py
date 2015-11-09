@@ -3,6 +3,7 @@ from config.networkParams import MESSAGE_DELIMITER
 from config.networkParams import DUMMY_PROC_WAIT_TIME
 from src.graph.graph import Graph
 from src.util.task import Task
+import time
 
 ''' Module to extend the subgraph.
     Constructer is initialized by graph structure (n, m, adjacency list
