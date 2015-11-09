@@ -47,10 +47,10 @@ class ExtendSubgraph:
             newTasks.append(Task(newVertices, newEdges, newBloomHash, newServerHash))
         return newTasks
 
-    '''Subroutine / proc to be performed on each coputed subgraph goes here
-        currently its a dummy fucntion which waits for some miliseconds'''
+    '''Subroutine / proc to be performed on each computed subgraph goes here
+        currently it's a dummy function which waits for few milliseconds'''
     def computeAndSave(self,task):
-        '''task contains sufficeint infromation to do any kind of computation of subraph'''
+        '''task contains sufficient information to do any kind of computation of subraph'''
         time.sleep(DUMMY_PROC_WAIT_TIME)
         return
 
